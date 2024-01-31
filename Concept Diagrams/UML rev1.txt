@@ -1,0 +1,55 @@
+@startuml
+class KeyPad
+{
+SCAN_OUTPUT_SEQUENCE
+KEY_PATTERNS
+
+void ConfigKeyPad()
+unsigned char GetKeyPressed()
+void SaveKeyToCode()
+bool IsCorrectCode()
+void ClearCode()
+bool ExceededMaxTries()
+void IRQ()
+}
+
+class Servos
+{
+SERVO_PORT
+SERVO_PIN
+SERVO_MAX_PULSE
+SERVO_MIN_PULSE
+SERVO_PWM_FREQUENCY
+SERVO_SOURCE_CLK_FREQUENCY
+SERVO_SOURCE_CLK_PRESCALER
+
+SERVO_TMR_PERIOD
+SERVO_MIN_TICKS
+SERVO_MAX_TICKS
+ConfigServo()
+SetServoAngle(uint16_t angle)
+}
+
+class LEDs
+{
+LED_PORT
+GREEN_LED_PIN
+RED_LED_PIN
+ConfigLEDs()
+TurnOnLED(string color)
+void IRQ()
+}
+
+class Main
+{
+Main()
+OpenDoor()
+CloseDoor()
+ActivateSecurityFeature()
+DisableSecurityFeature()
+}
+Servos--Main
+LEDs--Main
+KeyPad--Main
+
+@enduml
