@@ -7,22 +7,23 @@
 
 
 #include "LED.h"
+#include <LED.h>
 
 void ConfigureLED(void) {
 
 
     // GPIO Setup
-        LED_Port->SEL0 &= ~(LED1_Pin | LED2_Pin);                      // Set LED1 pin to GPIO function
-        LED_Port->SEL1 &= ~(LED1_Pin | LED2_Pin);
-        LED_Port->DIR |= (LED1_Pin | LED2_Pin;
-        LED_Port->OUT &= ~(LED1_Pin | LED2_Pin);                       //  LEDs start off
+        LED_Port->SEL0 &= ~(BIT4 | BIT5);                      // Set LED1 pin to GPIO function
+        LED_Port->SEL1 &= ~(BIT4 | BIT5);
+        LED_Port->DIR |= (BIT4 | BIT5);
+        LED_Port->OUT &= ~(BIT4 | BIT4);                       //  LEDs start off
 
 }
 
 void led1On() {
-    LED_Port->OUT &= LED1_pin;
+    LED_Port->OUT &= BIT4;
 }
 
 void led2On() {
-    LED_Port->OUT &= LED2_pin;
+    LED_Port->OUT &= BIT5;
 }
