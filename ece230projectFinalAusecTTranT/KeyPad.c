@@ -7,8 +7,11 @@
 #include <msp.h>
 #include <stdint.h>
 #include "KeyPad.h"
-uint8_t SCAN_OUTPUT_SEQUENCE[8]={0b01111111,0b10111111,0b11011111
-                                 ,0b11101111,0b11110111,0b11111011,0b11111101,0b11111110};
+#include "stdbool.h"
+
+//uint8_t SCAN_OUTPUT_SEQUENCE[8]={0b01111111,0b10111111,0b11011111
+//                                 ,0b11101111,0b11110111,0b11111011,0b11111101,0b11111110};
+
 #define KEYPAD_PORT P2
 
 uint16_t currentCode[4]={zero,zero,zero,zero};
@@ -47,5 +50,4 @@ void IRQ(){
 void HandleButtonPressed(){
     key pressed=GetKeyPressed();
     SaveKeyToCode(pressed);
-    if()
 }
