@@ -27,3 +27,11 @@ void led1On() {
 void led2On() {
     LED_Port->OUT &= BIT5;
 }
+
+void led1Off() {
+    LED_Port->OUT &= ~BIT4;
+}
+
+void led2Off() {
+    LED_Port->OUT &= ~BIT5;
+}
