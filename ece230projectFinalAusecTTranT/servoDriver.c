@@ -1,6 +1,6 @@
 /*! \file */
 /*!
- * servoDriverTemplate_jjs.c
+ * servoDriver.c
  * ECE230-01/02 Winter 2023-2024
  * Date: January 11, 2024
  * Description: Servo motor driver for MSP432P4111 Launchpad.

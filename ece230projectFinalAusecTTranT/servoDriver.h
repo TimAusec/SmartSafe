@@ -26,7 +26,7 @@ extern "C"
 
 #include "msp.h"
 
-// DONE add tick count values for constants
+// add tick count values for constants
 #define SERVO_TMR_PERIOD                60000
 #define SERVO_MIN_ANGLE                 2250
 #define SERVO_MAX_ANGLE                 6500
