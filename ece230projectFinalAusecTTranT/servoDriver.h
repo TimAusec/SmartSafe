@@ -28,9 +28,9 @@ extern "C"
 
 // DONE add tick count values for constants
 #define SERVO_TMR_PERIOD                60000
-#define SERVO_MIN_ANGLE                 1000
-#define SERVO_MAX_ANGLE                 8000
-#define FIFTY_DEGREE_TICKS              3500
+#define SERVO_MIN_ANGLE                 2250
+#define SERVO_MAX_ANGLE                 6500
+#define NINETY_DEGREE_TICKS             4250
 
 
 /*!
@@ -57,7 +57,7 @@ extern void initServoMotor(void);
  *
  * \return None
  */
-extern void incrementTenDegree(void);
+extern void incrementNinetyDegree(void);
 
 
 /*!

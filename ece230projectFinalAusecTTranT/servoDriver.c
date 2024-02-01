@@ -55,9 +55,9 @@ void initServoMotor(void) {
     TIMER_A2->EX0 |= BIT0 | BIT1;
 }
 
-void increment100Degree(void) {
+void incrementNinetyDegree(void) {
     // update pulse-width for <current angle> + <10 degrees>
-    pulseWidthTicks += FIFTY_DEGREE_TICK;
+    pulseWidthTicks += NINETY_DEGREE_TICKS;
     if (pulseWidthTicks > SERVO_MAX_ANGLE) {
         pulseWidthTicks = SERVO_MIN_ANGLE;
     }

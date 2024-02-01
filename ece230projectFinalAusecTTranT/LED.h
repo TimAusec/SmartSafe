@@ -8,10 +8,14 @@
 #ifndef LED_H_
 #define LED_H_
 
+#include "msp.h"
+
+#define LED_Port P2
+
+extern void ConfigureLED(void);
+extern void led1On(void);
+extern void led2On(void);
+extern void led1Off(void);
+extern void led2Off(void);
+
 #endif /* LED_H_ */
-
-#define LED_Port P1
-#define LED1_Pin BIT0
-#define LED2_Pin BIT1
-
-void ConfigureLED(void);
