@@ -11,39 +11,33 @@
 void Debounce()
 {
     int index;
-    for(index=0;index<2500;index++);
+    for (index = 0; index < 2500; index++)
+        ;
 }
 
 void main()
 {
     ConfigKeyPad();
     __enable_irq();
-    while(1)
+    while (1)
     {
-        //TODO: Implement test
-        if (IsOpenCode())
+        if (GetOpenCodeFlag())
         {
             printf("\n Open Condition Reached");
-            //TODO: open servos
-            //TODO: turn on LEDs
-            int dummy=0;
-            ClearCode(&dummy);
         }
-        else
+        else if (GetTriesExceededFlag())
         {
-            if(IsExceededMaxTries())
-            {
-                //TODO: Active security features
-                printf("\n Exceeded Tries Condition Reached");
-            }
+            printf("\n Exceeded Tries Condition Reached");
+
         }
-        if (IsStopCode())
+        if (GetCloseCodeFlag())
+        {
+            printf("\n Close Condition Reached");
+        }
+        if (GetStopCodeFlag())
         {
             printf("\n Stop Condition Reached");
-            //TODO: Deactivate security features
-            //TODO: Reset to initial state
         }
-        //TODO: Clear interrupt flag
     }
 
 }

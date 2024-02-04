@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-
-
 #endif /* KEYPADTEST_H_ */
 
 extern void Debounce();

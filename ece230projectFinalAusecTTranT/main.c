@@ -7,6 +7,7 @@
 #include <servoDriver.h>
 #include "csHFXT.h"
 #include "servoDriver.h"
+#include <stdbool.h>
 
 #define Switch1_Port P1
 #define Switch1_Pin BIT1
@@ -18,10 +19,12 @@ void configureSW1(void) {
     Switch1_Port->OUT |= Switch1_Pin;        // enable internal pull-up resistor on P1.1
     Switch1_Port->REN |= Switch1_Pin;
 }
-
+#define DEFAULT_CLOCK_FREQUENCY_KHZ 500
+#define DEBOUNCE_DELAY_TIME_MS      30
+#define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
 void Debounce() {
     volatile int i;
-    for(i = 0; i < 15000; i++);
+    for(i = 0; i < DEBOUNCE_DELAY_COUNT; i++);
 }
 
 void WaitForSwitchToOpen()
@@ -29,6 +32,11 @@ void WaitForSwitchToOpen()
     Debounce();
     while(!(Switch1_Port->IN & Switch1_Pin));        // wait for release
     Debounce();
+}
+
+void UpdateFlags()
+{
+
 }
 
 void main(void)
@@ -42,6 +50,7 @@ void main(void)
     __enable_irq();
 
 	while(1){
+	    UpdateFlags();
 	    if (!(Switch1_Port->IN & Switch1_Pin) & (IsOpenCode())) {
 	        incrementNinetyDegree();
 	        WaitForSwitchToOpen();

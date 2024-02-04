@@ -22,48 +22,52 @@ extern "C"
 
 typedef enum _bool
 {
-    false, true
-} bool;
+false, true
+}bool;
 typedef enum _key
 {
-    one,
-    two,
-    three,
-    A,
-    four,
-    five,
-    six,
-    B,
-    seven,
-    eight,
-    nine,
-    C,
-    asterisk,
-    zero,
-    pound,
-    D,
-    INVALID
+one,
+two,
+three,
+A,
+four,
+five,
+six,
+B,
+seven,
+eight,
+nine,
+C,
+asterisk,
+zero,
+pound,
+D,
+INVALID
 } key;
 
-extern void ConfigKeyPad();
+int length(key array[]);
+
+extern void ConfigKeyPad(void);
 //TODO: Document
 extern key ConvertInputToKey(char input[]);
 //TODO: Document
-extern key GetKeyPressed();
+extern key GetKeyPressed(void);
+//TODO: Document
+extern void ClearCode(void);
 //TODO: Document
 extern void SaveKeyToCode(key key);
 //TODO: Document
-extern void ClearCode();
+extern void CalculateIsOpenCode(void);
 //TODO: Document
-extern bool IsOpenCode();
+extern void HandleButtonValue(key pressed);
 //TODO: Document
-extern bool IsCloseCode();
+extern void HandleButtonPressed(void);
 //TODO: Document
-extern bool IsExceededMaxTries();
+extern bool GetCloseCodeFlag(void);
 //TODO: Document
-extern bool IsStopCode();
+extern bool GetStopCodeFlag(void);
 //TODO: Document
-extern void HandleButtonPressed();
+extern bool GetTriesExceededFlag(void);
 //TODO: Document
-extern void SetAllOutputPinsHigh();
+extern bool GetOpenCodeFlag(void);
 //TODO: Document
