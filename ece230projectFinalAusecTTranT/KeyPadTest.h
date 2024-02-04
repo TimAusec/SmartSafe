@@ -7,6 +7,9 @@
 
 #ifndef KEYPADTEST_H_
 #define KEYPADTEST_H_
+#include "KeyPad.h"
+#include <stdio.h>
+#include <stdint.h>
 
 
 

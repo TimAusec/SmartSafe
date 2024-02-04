@@ -4,13 +4,14 @@
  *  Created on: Feb 1, 2024
  *      Author: Timothy Ausec
  */
-#include "keypad.h"
+#include "KeyPad.h"
 #include <stdio.h>
+#include <stdint.h>
 
 void Debounce()
 {
     int index;
-    for(index=0;index<30000;index++);
+    for(index=0;index<2500;index++);
 }
 
 void main()
@@ -22,24 +23,27 @@ void main()
         //TODO: Implement test
         if (IsOpenCode())
         {
-            printf("Open Condition Reached");
+            printf("\n Open Condition Reached");
             //TODO: open servos
             //TODO: turn on LEDs
+            int dummy=0;
+            ClearCode(&dummy);
         }
         else
         {
             if(IsExceededMaxTries())
             {
                 //TODO: Active security features
-                printf("Exceeded Tries Condition Reached");
+                printf("\n Exceeded Tries Condition Reached");
             }
         }
         if (IsStopCode())
         {
-            printf("Stop Condition Reached");
+            printf("\n Stop Condition Reached");
             //TODO: Deactivate security features
             //TODO: Reset to initial state
         }
         //TODO: Clear interrupt flag
     }
+
 }
