@@ -19,25 +19,51 @@ void configureSW1(void) {
     Switch1_Port->REN |= Switch1_Pin;
 }
 
-void debounce() {
+void Debounce() {
     volatile int i;
     for(i = 0; i < 15000; i++);
+}
+
+void WaitForSwitchToOpen()
+{
+    Debounce();
+    while(!(Switch1_Port->IN & Switch1_Pin));        // wait for release
+    Debounce();
 }
 
 void main(void)
 {
 	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 	ConfigureLED();
-	led1on();
 	configHFXT();
 	configureSW1();
 	initServoMotor();
+    ConfigKeyPad();
+    __enable_irq();
+
 	while(1){
-	    if (!(Switch1_Port->IN & Switch1_Pin)) {
+	    if (!(Switch1_Port->IN & Switch1_Pin) & (IsOpenCode())) {
 	        incrementNinetyDegree();
-	        debounce();
-	        while(!(Switch1_Port->IN & Switch1_Pin));        // wait for release
-	        debounce();
+	        WaitForSwitchToOpen();
+            int dummy=0;
+            ClearCode(&dummy);
+            led1On();
 	    }
+        else
+        {
+            if(IsExceededMaxTries())
+            {
+                led1Off();
+                led2On();
+                //TODO: Active security features
+                printf("\n Exceeded Tries Condition Reached");
+            }
+        }
+        if (IsStopCode())
+        {
+            printf("\n Stop Condition Reached");
+            //TODO: Deactivate security features
+            //TODO: Reset to initial state
+        }
 	}
 }
