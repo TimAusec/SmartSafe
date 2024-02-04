@@ -2,10 +2,11 @@
  * KeyPad.h
  *
  *  Created on: Jan 31, 2024
- *      Author: ausectj
+ *      Author: Timothy Ausec
  */
 #ifndef KEYPAD_H_
 #define KEYPAD_H_
+#endif
 
 //*****************************************************************************
 //
@@ -21,26 +22,27 @@ extern "C"
 
 typedef enum _bool
 {
-false, true
+    false, true
 } bool;
 typedef enum _key
-{one,
-two,
-three,
-A,
-four,
-five,
-six,
-B,
-seven,
-eight,
-nine,
-C,
-asterisk,
-zero,
-pound,
-D,
-INVALID
+{
+    one,
+    two,
+    three,
+    A,
+    four,
+    five,
+    six,
+    B,
+    seven,
+    eight,
+    nine,
+    C,
+    asterisk,
+    zero,
+    pound,
+    D,
+    INVALID
 } key;
 
 extern void ConfigKeyPad();
@@ -60,8 +62,6 @@ extern bool IsCloseCode();
 extern bool IsExceededMaxTries();
 //TODO: Document
 extern bool IsStopCode();
-//TODO: Document
-extern void IRQ();
 //TODO: Document
 extern void HandleButtonPressed();
 //TODO: Document
