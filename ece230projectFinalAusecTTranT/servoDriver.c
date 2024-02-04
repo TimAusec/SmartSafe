@@ -55,7 +55,7 @@ void initServoMotor(void) {
     TIMER_A2->EX0 |= BIT0 | BIT1;
 }
 
-void incrementNinetyDegree(void) {
+void OpenServo(void) {
     // update pulse-width for <current angle> + <10 degrees>
     pulseWidthTicks += NINETY_DEGREE_TICKS;
     if (pulseWidthTicks > SERVO_MAX_ANGLE) {
@@ -65,6 +65,10 @@ void incrementNinetyDegree(void) {
     TIMER_A2->CCR[1] = pulseWidthTicks;
 }
 
+void CloseServo(void)
+{
+    //TODO: Implement setting servo to 0 degrees
+}
 //void setServoAngle(uint16_t angle) {
     // NOT NEEDED FOR EXERCISE - but would be useful function for driver
 //}

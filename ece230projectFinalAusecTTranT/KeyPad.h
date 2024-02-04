@@ -19,33 +19,8 @@ extern "C"
 
 #endif
 #include "msp.h"
-
-typedef enum _bool
-{
-false, true
-}bool;
-typedef enum _key
-{
-one,
-two,
-three,
-A,
-four,
-five,
-six,
-B,
-seven,
-eight,
-nine,
-C,
-asterisk,
-zero,
-pound,
-D,
-INVALID
-} key;
-
-int length(key array[]);
+#include "main.h"
+#include "enums.h"
 
 extern void ConfigKeyPad(void);
 //TODO: Document
@@ -59,9 +34,9 @@ extern void SaveKeyToCode(key key);
 //TODO: Document
 extern void CalculateIsOpenCode(void);
 //TODO: Document
-extern void HandleButtonValue(key pressed);
+extern void HandleKeyPadButtonValue(key pressed);
 //TODO: Document
-extern void HandleButtonPressed(void);
+extern void HandleKeyPadButtonPressed(void);
 //TODO: Document
 extern bool GetCloseCodeFlag(void);
 //TODO: Document

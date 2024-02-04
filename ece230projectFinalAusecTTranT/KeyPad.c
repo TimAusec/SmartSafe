@@ -19,7 +19,7 @@ const int NUMBER_OF_ROWS = 4;
 const int NUMBER_OF_COLUMNS = 4;
 
 /*Define Security Threshold*/
-const int MAX_TRIES_ALLOWED = 4;
+const int MAX_TRIES_ALLOWED = 2;
 int currentTriesCount = 0;
 /*Declare Flags*/
 bool stopCodeFlag = false;
@@ -34,12 +34,6 @@ const key STOP_KEY = asterisk;
 const key CLOSE_KEY = pound;
 const int CODE_LENGTH = sizeof(CORRECT_CODE) / sizeof(CORRECT_CODE[0]);
 key currentCode[4] = { INVALID, INVALID, INVALID, INVALID };
-
-int length(key array[])
-{
-    //TODO: Move to main
-    return sizeof(array) / sizeof(array[0]);
-}
 
 void ConfigKeyPad()
 {                //see section 12.4 of the MSP432P4XX technical reference manual
@@ -126,7 +120,13 @@ void ClearCode()
     {
         currentCode[index] = INVALID;
     }
+    if(triesExceededFlag)
+    {
+        currentTriesCount=0;
+        triesExceededFlag=false;
+    }
     codeClearedFlag = true;
+    openCodeFlag = false;
 }
 
 void SaveKeyToCode(key inputKey)
@@ -142,6 +142,10 @@ void SaveKeyToCode(key inputKey)
         ClearCode();
         currentIndex = 0;
         currentTriesCount++;
+        if(currentTriesCount >MAX_TRIES_ALLOWED)
+        {
+         triesExceededFlag=true;
+        }
     }
     else
     {
@@ -175,7 +179,7 @@ void PORT4_IRQHandler(void) //Check startup_msp432p4111 file
 {
     if ((INPUT_PINS) & (KEYPAD_PORT->IFG)) //Check if input pins started IRQ
     {
-        HandleButtonPressed();
+        HandleKeyPadButtonPressed();
         KEYPAD_PORT->OUT |= OUTPUT_PINS; //set the output pins high to start reading
         KEYPAD_PORT->IFG = 0; //clear interrupt flags
     }
@@ -189,7 +193,7 @@ void PrintMessageToConsole(key pressed)
     printf("\n %d is the fourth key in the current code", currentCode[3]);
 }
 
-void HandleButtonValue(key pressed)
+void HandleKeyPadButtonValue(key pressed)
 {
     if ((pressed != STOP_KEY) | pressed != CLOSE_KEY)
     {
@@ -209,11 +213,11 @@ void HandleButtonValue(key pressed)
         ClearCode();
     }
 }
-void HandleButtonPressed()
+void HandleKeyPadButtonPressed()
 {
     Debounce();
     key pressed = GetKeyPressed();
-    HandleButtonValue(pressed);
+    HandleKeyPadButtonValue(pressed);
     while (GetKeyPressed() != INVALID)
         ; //wait for release
     Debounce();

@@ -7,31 +7,44 @@
 
 
 #include "LED.h"
-#include <LED.h>
 
-void ConfigureLED(void) {
-
-
+void ConfigureLEDs(void)
+{
     // GPIO Setup
-        LED_Port->SEL0 &= ~(BIT4 | BIT5);                      // Set LED1 pin to GPIO function
-        LED_Port->SEL1 &= ~(BIT4 | BIT5);
-        LED_Port->DIR |= (BIT4 | BIT5);
-        LED_Port->OUT &= ~(BIT4 | BIT5);                       //  LEDs start off
-
+        LED_PORT->SEL0 &= ~(GREEN_LED_PIN | RED_LED_PIN);                      // Set LED1 pin to GPIO function
+        LED_PORT->SEL1 &= ~(GREEN_LED_PIN | RED_LED_PIN);
+        LED_PORT->DIR |= (GREEN_LED_PIN | RED_LED_PIN);
+        LED_PORT->OUT &= ~(GREEN_LED_PIN | RED_LED_PIN);                       //  LEDs start off
 }
 
-void led1On() {
-    LED_Port->OUT |= BIT4;
+void GreenLEDOn() {
+    LED_PORT->OUT |= GREEN_LED_PIN;
 }
 
-void led2On() {
-    LED_Port->OUT |= BIT5;
+void RedLEDOn() {
+    LED_PORT->OUT |= RED_LED_PIN;
 }
 
-void led1Off() {
-    LED_Port->OUT &= ~BIT4;
+void GreenLEDOff() {
+    LED_PORT->OUT &= ~GREEN_LED_PIN;
 }
 
-void led2Off() {
-    LED_Port->OUT &= ~BIT5;
+void RedLEDOff() {
+    LED_PORT->OUT &= ~RED_LED_PIN;
+}
+
+void LEDIndicateOpen()
+{
+    GreenLEDOn();
+    RedLEDOff();
+}
+void LEDIndicateSecurityMode()
+{
+    RedLEDOn();
+    GreenLEDOff();
+}
+void LEDIndicateClosed()
+{
+    GreenLEDOff();
+    RedLEDOff();
 }

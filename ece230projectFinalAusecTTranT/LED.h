@@ -10,12 +10,25 @@
 
 #include "msp.h"
 
-#define LED_Port P2
+#define LED_PORT P2
+#define RED_LED_PIN BIT5
+#define GREEN_LED_PIN BIT4
 
-extern void ConfigureLED(void);
-extern void led1On(void);
-extern void led2On(void);
-extern void led1Off(void);
-extern void led2Off(void);
+extern void ConfigureLEDs(void);
+//TODO: Document
+extern void GreenLEDOn(void);
+//TODO: Document
+extern void RedLEDOn(void);
+//TODO: Document
+extern void GreenLEDOff(void);
+//TODO: Document
+extern void RedLEDOff(void);
+//TODO: Document
+extern void LEDIndicateOpen(void);
+//TODO: Document
+extern void LEDIndicateSecurityMode(void);
+//TODO: Document
+extern void LEDIndicateClosed(void);
+//TODO: Document
 
 #endif /* LED_H_ */

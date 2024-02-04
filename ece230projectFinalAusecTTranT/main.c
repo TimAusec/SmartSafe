@@ -1,78 +1,107 @@
+/*
+ * main.c
+ *
+ *  Created on: Jan 31, 2024
+ *      Authors:
+ *      Lucas Tyson
+ *      Timothy Ausec
+ *      Tuan Tran
+ *
+ *      ECE230 - Smart Safe
+ *      Rose-Hulman Institute of Technology
+ */
 #include "msp.h"
 
-#include <msp.h>
-#include <stdint.h>
-#include "KeyPad.h"
-#include "LED.h"
-#include <servoDriver.h>
-#include "csHFXT.h"
-#include "servoDriver.h"
-#include <stdbool.h>
+#include "main.h"
 
-#define Switch1_Port P1
-#define Switch1_Pin BIT1
-
-void configureSW1(void) {
-    Switch1_Port->SEL0 &= ~Switch1_Pin;      // set P1.1 for GPIO
-    Switch1_Port->SEL1 &= ~Switch1_Pin;
-    Switch1_Port->DIR &= ~Switch1_Pin;       // set P1.1 as input
-    Switch1_Port->OUT |= Switch1_Pin;        // enable internal pull-up resistor on P1.1
-    Switch1_Port->REN |= Switch1_Pin;
-}
 #define DEFAULT_CLOCK_FREQUENCY_KHZ 500
 #define DEBOUNCE_DELAY_TIME_MS      30
 #define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
-void Debounce() {
+
+bool safeOpenFlag=false;
+bool safeClosedFlag=true;
+bool safeSecurityFlag=false;
+
+void Debounce()
+{
     volatile int i;
     for(i = 0; i < DEBOUNCE_DELAY_COUNT; i++);
 }
 
-void WaitForSwitchToOpen()
+int length(int array[])
 {
-    Debounce();
-    while(!(Switch1_Port->IN & Switch1_Pin));        // wait for release
-    Debounce();
+    return sizeof(array) / sizeof(array[0]);
 }
 
-void UpdateFlags()
+void ConfigureDevices()
 {
+    ConfigureLEDs();
+    configHFXT();
+    ConfigureSW1();
+    initServoMotor();
+    ConfigKeyPad();
+}
 
+void OpenSafe()
+{
+    LEDIndicateOpen();
+    OpenServo();
+    ClearCode();
+    safeOpenFlag=true;
+    safeClosedFlag=false;
+}
+
+void ActivateSecurity()
+{
+    LEDIndicateSecurityMode();
+    CloseServo();
+    ClearCode();
+    safeSecurityFlag=true;
+    //TODO: Implement Security Measure
+}
+
+void CloseSafe()
+{
+    LEDIndicateClosed();
+    CloseServo();
+    ClearCode();
+    safeOpenFlag=false;
+    safeClosedFlag=true;
+}
+
+void ResetSafe()
+{
+    ClearCode();
+    //TODO: Implement Reset Safe to Initial State
 }
 
 void main(void)
 {
 	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
-	ConfigureLED();
-	configHFXT();
-	configureSW1();
-	initServoMotor();
-    ConfigKeyPad();
+	ConfigureDevices();
     __enable_irq();
 
-	while(1){
-	    UpdateFlags();
-	    if (!(Switch1_Port->IN & Switch1_Pin) & (IsOpenCode())) {
-	        incrementNinetyDegree();
-	        WaitForSwitchToOpen();
-            int dummy=0;
-            ClearCode(&dummy);
-            led1On();
-	    }
-        else
+	while(1)
+	{
+        if (GetOpenCodeFlag() & GetSwitch1Flag())
         {
-            if(IsExceededMaxTries())
-            {
-                led1Off();
-                led2On();
-                //TODO: Active security features
-                printf("\n Exceeded Tries Condition Reached");
-            }
+            printf("\n Open Condition Reached");
+            OpenSafe();
         }
-        if (IsStopCode())
+        else if (GetTriesExceededFlag())
+        {
+            printf("\n Exceeded Tries Condition Reached");
+            ActivateSecurity();
+        }
+        if (GetCloseCodeFlag())
+        {
+            printf("\n Close Condition Reached");
+            CloseSafe();
+        }
+        if (GetStopCodeFlag())
         {
             printf("\n Stop Condition Reached");
-            //TODO: Deactivate security features
-            //TODO: Reset to initial state
+            ResetSafe();
         }
 	}
 }

@@ -57,21 +57,18 @@ extern void initServoMotor(void);
  *
  * \return None
  */
-extern void incrementNinetyDegree(void);
+extern void OpenServo(void);
 
 
 /*!
- * \brief This function sets angle of servo
- *
- * This function sets angle of servo to \a angle (between -90 to 90)
- *
- *  \param angle Angle in degrees to set servo (between -90 to 90)
+ * \brief This function sets angle of servo to 90 degrees
  *
  * Modified \b TA2CCR1 register.
  *
  * \return None
  */
-//extern void setServoAngle(int8_t angle);
+extern void CloseServo(void);
+//TODO: Document
 
 
 //*****************************************************************************
