@@ -27,6 +27,8 @@
 
 /* Global Variables  */
 uint16_t pulseWidthTicks = SERVO_MIN_ANGLE;
+uint16_t pulseWidthTicks2 = SERVO_MAX_ANGLE;
+
 
 
 void initServoMotor(void) {
@@ -68,6 +70,11 @@ void OpenServo(void) {
 void CloseServo(void)
 {
     //TODO: Implement setting servo to 0 degrees
+    pulseWidthTicks2 -= NINETY_DEGREE_TICKS;
+    if (pulseWidthTicks2 < SERVO_MIN_ANGLE) {
+        pulseWidthTicks2 = SERVO_MAX_ANGLE;
+    }
+    TIMER_A2->CCR[1] = pulseWidthTicks2
 }
 //void setServoAngle(uint16_t angle) {
     // NOT NEEDED FOR EXERCISE - but would be useful function for driver
