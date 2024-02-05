@@ -18,14 +18,15 @@
 #define DEBOUNCE_DELAY_TIME_MS      30
 #define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
 
-bool safeOpenFlag=false;
-bool safeClosedFlag=true;
-bool safeSecurityFlag=false;
+bool safeOpenFlag = false;
+bool safeClosedFlag = true;
+bool safeSecurityFlag = false;
 
 void Debounce()
 {
     volatile int i;
-    for(i = 0; i < DEBOUNCE_DELAY_COUNT; i++);
+    for (i = 0; i < DEBOUNCE_DELAY_COUNT; i++)
+        ;
 }
 
 int length(int array[])
@@ -47,8 +48,8 @@ void OpenSafe()
     LEDIndicateOpen();
     OpenServo();
     ClearCode();
-    safeOpenFlag=true;
-    safeClosedFlag=false;
+    safeOpenFlag = true;
+    safeClosedFlag = false;
 }
 
 void ActivateSecurity()
@@ -56,7 +57,7 @@ void ActivateSecurity()
     LEDIndicateSecurityMode();
     CloseServo();
     ClearCode();
-    safeSecurityFlag=true;
+    safeSecurityFlag = true;
     //TODO: Implement Security Measure
 }
 
@@ -65,8 +66,8 @@ void CloseSafe()
     LEDIndicateClosed();
     CloseServo();
     ClearCode();
-    safeOpenFlag=false;
-    safeClosedFlag=true;
+    safeOpenFlag = false;
+    safeClosedFlag = true;
 }
 
 void ResetSafe()
@@ -74,34 +75,58 @@ void ResetSafe()
     ClearCode();
     //TODO: Implement Reset Safe to Initial State
 }
+void IndicateSafeUnlocked()
+{
+    LEDIndicateUnlocked();
+}
+
+void IndicateSafeLocked()
+{
+    LEDIndicateLocked();
+}
 
 void main(void)
 {
-	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
-	ConfigureDevices();
+    WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
+    ConfigureDevices();
     __enable_irq();
 
-	while(1)
-	{
-        if (GetOpenCodeFlag() & GetSwitch1Flag())
-        {
-            printf("\n Open Condition Reached");
-            OpenSafe();
-        }
-        else if (GetTriesExceededFlag())
+    while (1)
+    {
+        if (GetTriesExceededFlag())
         {
             printf("\n Exceeded Tries Condition Reached");
             ActivateSecurity();
         }
-        if (GetCloseCodeFlag())
+        if (safeClosedFlag)
         {
-            printf("\n Close Condition Reached");
-            CloseSafe();
+            if (GetOpenCodeFlag())
+            {
+                IndicateSafeUnlocked();
+            }
+            if (GetOpenCodeFlag() & GetSwitch1Flag())
+            {
+                printf("\n Open Condition Reached");
+                OpenSafe();
+            }
         }
-        if (GetStopCodeFlag())
+        if (safeOpenFlag)
         {
-            printf("\n Stop Condition Reached");
-            ResetSafe();
+            if (GetCloseCodeFlag())
+            {
+                printf("\n Close Condition Reached");
+                IndicateSafeLocked();
+            }
+            if (GetCloseCodeFlag() & GetSwitch1Flag())
+            {
+                printf("\n Close Condition Reached");
+                CloseSafe();
+            }
+            if (GetStopCodeFlag())
+            {
+                printf("\n Stop Condition Reached");
+                ResetSafe();
+            }
         }
-	}
+    }
 }

@@ -48,3 +48,13 @@ void LEDIndicateClosed()
     GreenLEDOff();
     RedLEDOff();
 }
+void LEDIndicateUnlocked()
+{
+    GreenLEDOn(); //PLACEHOLDER: DELETE AFTER IMPLEMENTATION
+    //TODO: Implement Blinking
+}
+void LEDIndicateLocked()
+{
+    RedLEDOn(); //PLACEHOLDER: DELETE AFTER IMPLEMENTATION
+    //TODO: Implement Blinking
+}

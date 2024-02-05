@@ -195,7 +195,7 @@ void PrintMessageToConsole(key pressed)
 
 void HandleKeyPadButtonValue(key pressed)
 {
-    if ((pressed != STOP_KEY) | pressed != CLOSE_KEY)
+    if ((pressed != STOP_KEY) & (pressed != CLOSE_KEY))
     {
         SaveKeyToCode(pressed);
         CalculateIsOpenCode();
