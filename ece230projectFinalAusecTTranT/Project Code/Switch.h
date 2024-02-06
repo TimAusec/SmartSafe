@@ -10,8 +10,8 @@
 
 #include "main.h"
 
-#define Switch1_Port P6
-#define Switch1_Pin BIT7
+#define Switch1_Port P1
+#define Switch1_Pin BIT1
 
 extern void ConfigureSW1(void);
 //TODO: Document

@@ -24,10 +24,12 @@
 
 #include <servoDriver.h>
 #include "msp.h"
+#include "KeyPad.h"
 
 /* Global Variables  */
 uint16_t pulseWidthTicks = SERVO_MIN_ANGLE;
 
+bool servoOpenFlag = false;
 
 void initServoMotor(void) {
     // DONE configure servo pin (P5.6) for primary module function (TA2.1),
@@ -53,21 +55,31 @@ void initServoMotor(void) {
     TIMER_A2->CTL |= BIT9 | BIT7 | BIT4;
     TIMER_A2->CTL &= ~BIT1;
     TIMER_A2->EX0 |= BIT0 | BIT1;
+    CloseServo();
 }
 
-void OpenServo(void) {
+void OpenServo(void)
+{
     // update pulse-width for <current angle> + <10 degrees>
     pulseWidthTicks += NINETY_DEGREE_TICKS;
-    if (pulseWidthTicks > SERVO_MAX_ANGLE) {
+    if (pulseWidthTicks > SERVO_MAX_ANGLE)
+    {
         pulseWidthTicks = SERVO_MIN_ANGLE;
     }
     // DONE update CCR1 register to set new positive pulse-width
     TIMER_A2->CCR[1] = pulseWidthTicks;
+    servoOpenFlag=true;
 }
 
 void CloseServo(void)
 {
     //TODO: Implement setting servo to 0 degrees
+    servoOpenFlag=false;
+}
+
+bool GetServoOpenFlag()
+{
+    return servoOpenFlag;
 }
 //void setServoAngle(uint16_t angle) {
     // NOT NEEDED FOR EXERCISE - but would be useful function for driver

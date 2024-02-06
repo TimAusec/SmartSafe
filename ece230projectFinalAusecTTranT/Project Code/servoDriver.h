@@ -25,6 +25,7 @@ extern "C"
 #endif
 
 #include "msp.h"
+#include "KeyPad.h"
 
 // add tick count values for constants
 #define SERVO_TMR_PERIOD                60000
@@ -70,7 +71,7 @@ extern void OpenServo(void);
 extern void CloseServo(void);
 //TODO: Document
 
-
+extern bool GetServoOpenFlag(void);
 //*****************************************************************************
 //
 // Mark the end of the C bindings section for C++ compilers.

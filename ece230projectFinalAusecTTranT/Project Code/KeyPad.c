@@ -48,6 +48,9 @@ void ConfigKeyPad()
     KEYPAD_PORT->IES &= ~(INPUT_PINS); //set input interrupts with a low-to-high transition
     KEYPAD_PORT->OUT |= OUTPUT_PINS;  //set the output pins low to start reading
     KEYPAD_PORT->IFG = 0;                                //clear interrupt flags
+    /*Clear Code*/
+    ClearCode();
+    currentTriesCount=0;
     /*Set Flags*/
     stopCodeFlag = false;
     closeCodeFlag = false;
@@ -117,16 +120,16 @@ void ClearCode()
 {
     int index;
     for (index = 0; index < CODE_LENGTH; index++)
-    {
+    { // Reset code
         currentCode[index] = INVALID;
     }
-    if(triesExceededFlag)
-    {
+    if(triesExceededFlag | openCodeFlag)
+    { // if the tries exceeded flag or open code flag are activated when this method is called, rest access attempt count
         currentTriesCount=0;
         triesExceededFlag=false;
     }
-    codeClearedFlag = true;
-    openCodeFlag = false;
+    codeClearedFlag = true; //let everyone know the code is clear
+    openCodeFlag = false; //let everyone know the openCode is not set
 }
 
 void SaveKeyToCode(key inputKey)
@@ -162,7 +165,6 @@ void CalculateIsOpenCode()
     if (triesExceededFlag)
     {
         truth = false;
-        ClearCode();
     }
     else
     {
