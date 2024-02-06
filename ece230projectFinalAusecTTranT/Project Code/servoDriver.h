@@ -6,8 +6,10 @@
  *              Assumes SMCLK configured with 48MHz HFXT as source.
  *              Uses Timer_A2 and P5.6 (TA2.1)
  *
- *  Created on:
- *      Author:
+ * Author: Tuan Tran
+ * Contributors:
+ *         Timothy Ausec
+ * Date: February 1, 2024
  */
 
 #ifndef SERVODRIVER_H_
@@ -29,9 +31,8 @@ extern "C"
 
 // add tick count values for constants
 #define SERVO_TMR_PERIOD                60000
-#define SERVO_MIN_ANGLE                 2250
-#define SERVO_MAX_ANGLE                 6500
-#define NINETY_DEGREE_TICKS             4250
+#define SERVO_ZERO_DEGREE_TICKS         2250
+#define SERVO_NINETY_DEGREE_TICKS       6500
 
 
 /*!

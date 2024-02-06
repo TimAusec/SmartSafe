@@ -2,7 +2,10 @@
 /*!
  * servoDriver.c
  * ECE230-01/02 Winter 2023-2024
- * Date: January 11, 2024
+ * Author: Tuan Tran
+ * Contributors:
+ *         Timothy Ausec
+ * Date: February 1, 2024
  * Description: Servo motor driver for MSP432P4111 Launchpad.
  *              Assumes SMCLK configured with 48MHz HFXT as source.
  *              Uses Timer_A2 and P5.6 (TA2.1)
@@ -27,7 +30,8 @@
 #include "KeyPad.h"
 
 /* Global Variables  */
-uint16_t pulseWidthTicks = SERVO_MIN_ANGLE;
+uint16_t pulseWidthTicks = SERVO_ZERO_DEGREE_TICKS;
+uint16_t pulseWidthTicks2 = SERVO_NINETY_DEGREE_TICKS;
 
 bool servoOpenFlag = false;
 
@@ -43,9 +47,9 @@ void initServoMotor(void) {
     // Set period of Timer_A2 in CCR0 register for Up Mode
     TIMER_A2->CCR[0] = SERVO_TMR_PERIOD;
     // Set initial positive pulse-width of PWM in CCR1 register
-    TIMER_A2->CCR[1] = SERVO_MIN_ANGLE;
+    CloseServo();
 
-    // DONE configure TA2CCR1 for Compare mode, Reset/Set output mode, with interrupt disabled
+    // configure TA2CCR1 for Compare mode, Reset/Set output mode, with interrupt disabled
     TIMER_A2->CCTL[1] |= BIT7 | BIT6 | BIT5;
     TIMER_A2->CCTL[1] &= ~(BIT8 | BIT4);
 
@@ -55,25 +59,17 @@ void initServoMotor(void) {
     TIMER_A2->CTL |= BIT9 | BIT7 | BIT4;
     TIMER_A2->CTL &= ~BIT1;
     TIMER_A2->EX0 |= BIT0 | BIT1;
-    CloseServo();
 }
 
 void OpenServo(void)
 {
-    // update pulse-width for <current angle> + <10 degrees>
-    pulseWidthTicks += NINETY_DEGREE_TICKS;
-    if (pulseWidthTicks > SERVO_MAX_ANGLE)
-    {
-        pulseWidthTicks = SERVO_MIN_ANGLE;
-    }
-    // DONE update CCR1 register to set new positive pulse-width
-    TIMER_A2->CCR[1] = pulseWidthTicks;
+    TIMER_A2->CCR[1] = SERVO_NINETY_DEGREE_TICKS;
     servoOpenFlag=true;
 }
 
 void CloseServo(void)
 {
-    //TODO: Implement setting servo to 0 degrees
+    TIMER_A2->CCR[1] = SERVO_ZERO_DEGREE_TICKS;
     servoOpenFlag=false;
 }
 
@@ -81,6 +77,3 @@ bool GetServoOpenFlag()
 {
     return servoOpenFlag;
 }
-//void setServoAngle(uint16_t angle) {
-    // NOT NEEDED FOR EXERCISE - but would be useful function for driver
-//}
