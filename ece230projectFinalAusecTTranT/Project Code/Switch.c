@@ -61,6 +61,9 @@ bool CheckSW1()
 bool GetSwitch1Flag()
 {
     bool flag=switch1Flag;
-    switch1Flag=CheckSW1;
-    return switch1Flag;
+    if(switch1Flag)
+    {
+        switch1Flag=CheckSW1();
+    }
+    return flag;
 }
