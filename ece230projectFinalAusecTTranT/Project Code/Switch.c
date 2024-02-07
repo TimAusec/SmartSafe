@@ -45,10 +45,6 @@ void PORT1_IRQHandler(void)
             HandleSwitch1Pressed();
             Switch1_Port->IFG &= ~Switch1_Pin; //clear interrupt flags
         }
-//    if (0) // TODO: Find Timer
-//    { //See section 6.12, table 6-80 in the MSP432P411X Data Sheet (TA2.4)
-//        CheckSW1();
-//    }
 }
 
 void HandleSwitch1Pressed()
@@ -64,5 +60,7 @@ bool CheckSW1()
 
 bool GetSwitch1Flag()
 {
+    bool flag=switch1Flag;
+    switch1Flag=CheckSW1;
     return switch1Flag;
 }
