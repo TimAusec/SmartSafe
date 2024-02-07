@@ -13,6 +13,9 @@
 #define LED_PORT P2
 #define RED_LED_PIN BIT5
 #define GREEN_LED_PIN BIT4
+#define LED_MASK 0b00000001
+#define FULL_NOTE       32768
+#define QUARTER_NOTE    8192
 
 extern void ConfigureLEDs(void);
 //TODO: Document
