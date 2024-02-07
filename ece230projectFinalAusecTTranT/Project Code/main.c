@@ -23,14 +23,14 @@ int length(int array[])
 
 void ConfigureDevices()
 {
-//    ConfigRTC();
     ConfigureLEDs();
     configHFXT();
 //    configLFXT_jjs();
+//    ConfigRTC();
     ConfigureSW1();
     InitServoMotor();
     ConfigKeyPad();
- //   InitBluetooth();
+    //   InitBluetooth();
 }
 
 void OpenSafe()
@@ -85,7 +85,7 @@ void main(void)
         {
             printf("\n Exceeded Tries Condition Reached");
             ActivateSecurity();
-        }//end if access attempt count exceeded
+        } //end if access attempt count exceeded
         if (!GetServoOpenFlag()) //if closed
         {
             if (GetOpenCodeFlag()) // if open code entered
@@ -105,16 +105,16 @@ void main(void)
                 printf("\n Close Condition Reached");
                 IndicateSafeLocked();
             }
-            if (GetCloseCodeFlag() & GetSwitch1Flag())//if close code entered and switch pressed
+            if (GetCloseCodeFlag() & GetSwitch1Flag()) //if close code entered and switch pressed
             {
                 printf("\n Close Condition Reached");
                 CloseSafe();
             }
-        }// end if open
-        if (GetStopCodeFlag() & GetSwitch1Flag())//if stop security code entered and switch pressed
+        } // end if open
+        if (GetStopCodeFlag() & GetSwitch1Flag()) //if stop security code entered and switch pressed
         {
             printf("\n Stop Condition Reached");
             ResetSafe();
         } // end if stop security code entered and switch pressed
-    }//end while(1)
+    } //end while(1)
 }

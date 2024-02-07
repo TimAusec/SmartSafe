@@ -47,7 +47,7 @@ void ConfigKeyPad()
     KEYPAD_PORT->IE |= INPUT_PINS;             //enable interrupts on input pins
     KEYPAD_PORT->IES &= ~(INPUT_PINS); //set input interrupts with a low-to-high transition
     KEYPAD_PORT->OUT |= OUTPUT_PINS;  //set the output pins low to start reading
-    KEYPAD_PORT->IFG = 0;                                //clear interrupt flags
+    KEYPAD_PORT->IFG &= ~INPUT_PINS;                                //clear interrupt flags
     /*Clear Code*/
     ClearCode();
     currentTriesCount=0;
@@ -58,7 +58,7 @@ void ConfigKeyPad()
     openCodeFlag = false;
     codeClearedFlag = false;
     /*Enable NVIC In The ISER Register*/
-    NVIC->ISER[1] = (1 << (PORT4_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
+    NVIC->ISER[1] |= (1 << (PORT4_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
 }
 
 key ConvertInputToKey(char input[])
@@ -98,7 +98,6 @@ key GetKeyPressed()
     const uint8_t SCAN_OUTPUT_SEQUENCE[NUMBER_OF_COLUMNS] = { BIT7, BIT6,
     BIT5,
                                                               BIT4 };
-    int index = 0;
     key inputKey = INVALID;
     KEYPAD_PORT->OUT &= ~(OUTPUT_PINS); //set all output low
 

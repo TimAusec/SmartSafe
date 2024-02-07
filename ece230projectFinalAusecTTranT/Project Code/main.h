@@ -10,6 +10,7 @@
 
 #include <msp.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "LED.h"
 #include <servoDriver.h>
 #include "csHFXT.h"
@@ -22,5 +23,7 @@
 #include "csLFXT_jjs.h"
 
 extern int length(int array[]);
+
+extern void ConfigureDevices();
 
 #endif /* MAIN_H_ */

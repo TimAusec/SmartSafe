@@ -25,17 +25,17 @@ void ConfigureSW1(void)
     Switch1_Port->SEL1 &= ~Switch1_Pin;      // set Switch1 for GPIO
     Switch1_Port->DIR &= ~Switch1_Pin;       // set Switch1 as input
     Switch1_Port->REN |= Switch1_Pin;        // enable internal pull-up resistor on Switch1
+    Switch1_Port->IFG&=~Switch1_Pin;
     Switch1_Port->IE |= Switch1_Pin;        // enable interrupts Switch1
-    Switch1_Port->IES |= Switch1_Pin;       //set input interrupts with a low-to-high transition
-
+    Switch1_Port->IES |= Switch1_Pin;       //set input interrupts with a high to low transition
     /*Enable NVIC In The ISER Register*/
-    NVIC->ISER[1] = (1 << (PORT1_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
+    NVIC->ISER[1] |= (1 << (PORT1_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
 }
 
 void WaitForSwitch1ToOpen()
 {
     Debounce(); // press debounce
-    while(!(Switch1_Port->IN & Switch1_Pin));        // wait for release
+    while(!(CheckSW1()));        // wait for release
     Debounce(); //release debounce
 }
 void PORT1_IRQHandler(void)
@@ -43,22 +43,23 @@ void PORT1_IRQHandler(void)
     if ((Switch1_Pin) & (Switch1_Port->IFG)) //Check if switch1 pin started IRQ
         {
             HandleSwitch1Pressed();
-            Switch1_Port->IFG = 0; //clear interrupt flags
+            Switch1_Port->IFG &= ~Switch1_Pin; //clear interrupt flags
         }
-    if (0) // TODO: Find Timer
-    { //See section 6.12, table 6-80 in the MSP432P411X Data Sheet (TA2.4)
-        CheckSW1();
-    }
+//    if (0) // TODO: Find Timer
+//    { //See section 6.12, table 6-80 in the MSP432P411X Data Sheet (TA2.4)
+//        CheckSW1();
+//    }
 }
+
 void HandleSwitch1Pressed()
 {
     switch1Flag=true;
     WaitForSwitch1ToOpen();
 }
 
-void CheckSW1()
+bool CheckSW1()
 {
-
+    return ((Switch1_Pin) & (Switch1_Port->IFG));
 }
 
 bool GetSwitch1Flag()

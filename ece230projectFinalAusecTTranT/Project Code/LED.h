@@ -24,11 +24,14 @@ extern void GreenLEDOff(void);
 //TODO: Document
 extern void RedLEDOff(void);
 //TODO: Document
-extern void LEDIndicateOpen(void);
+extern void LEDIndicateUnlocked(void);
 //TODO: Document
 extern void LEDIndicateSecurityMode(void);
 //TODO: Document
-extern void LEDIndicateClosed(void);
+extern void LEDIndicateLocked(void);
 //TODO: Document
+extern void LEDIndicateClosed(void);
+
+extern void LEDIndicateOpen(void);
 
 #endif /* LED_H_ */

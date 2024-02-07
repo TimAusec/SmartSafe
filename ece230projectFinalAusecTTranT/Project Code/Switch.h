@@ -23,5 +23,6 @@ extern void HandleSwitch1Pressed(void);
 //TODO: Document
 extern bool GetSwitch1Flag(void);
 //TODO: Document
+extern bool CheckSW1(void);
 
 #endif /* SWITCH_H_ */
