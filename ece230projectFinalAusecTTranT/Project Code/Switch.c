@@ -8,6 +8,16 @@
 #include "Switch.h"
 bool switch1Flag=false;
 
+#define DEFAULT_CLOCK_FREQUENCY_KHZ 500
+#define DEBOUNCE_DELAY_TIME_MS      30
+#define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
+
+void Debounce()
+{
+    volatile int i;
+    for (i = 0; i < DEBOUNCE_DELAY_COUNT; i++)
+        ;
+}
 void ConfigureSW1(void)
 {//see section 12.4 of the MSP432P4XX technical reference manual
     /*Configure GPIO Pins*/
@@ -17,6 +27,7 @@ void ConfigureSW1(void)
     Switch1_Port->REN |= Switch1_Pin;        // enable internal pull-up resistor on Switch1
     Switch1_Port->IE |= Switch1_Pin;        // enable interrupts Switch1
     Switch1_Port->IES |= Switch1_Pin;       //set input interrupts with a low-to-high transition
+
     /*Enable NVIC In The ISER Register*/
     NVIC->ISER[1] = (1 << (PORT1_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
 }

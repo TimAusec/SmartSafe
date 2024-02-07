@@ -35,7 +35,7 @@ uint16_t pulseWidthTicks2 = SERVO_NINETY_DEGREE_TICKS;
 
 bool servoOpenFlag = false;
 
-void initServoMotor(void) {
+void InitServoMotor(void) {
     // DONE configure servo pin (P5.6) for primary module function (TA2.1),
     //  output, initially LOW
     P5->OUT &= ~BIT6;

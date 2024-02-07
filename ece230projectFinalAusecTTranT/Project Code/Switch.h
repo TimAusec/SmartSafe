@@ -13,6 +13,8 @@
 #define Switch1_Port P1
 #define Switch1_Pin BIT1
 
+extern void Debounce();
+//TODO: Document
 extern void ConfigureSW1(void);
 //TODO: Document
 extern void WaitForSwitch1ToOpen(void);

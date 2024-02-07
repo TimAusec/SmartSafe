@@ -14,18 +14,7 @@
 
 #include "main.h"
 
-#define DEFAULT_CLOCK_FREQUENCY_KHZ 500
-#define DEBOUNCE_DELAY_TIME_MS      30
-#define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
-
 bool safeSecurityFlag = false;
-
-void Debounce()
-{
-    volatile int i;
-    for (i = 0; i < DEBOUNCE_DELAY_COUNT; i++)
-        ;
-}
 
 int length(int array[])
 {
@@ -34,11 +23,14 @@ int length(int array[])
 
 void ConfigureDevices()
 {
+//    ConfigRTC();
     ConfigureLEDs();
     configHFXT();
+//    configLFXT_jjs();
     ConfigureSW1();
-    initServoMotor();
+    InitServoMotor();
     ConfigKeyPad();
+ //   InitBluetooth();
 }
 
 void OpenSafe()

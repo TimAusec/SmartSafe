@@ -17,6 +17,9 @@
 #include "keypad.h"
 #include "switch.h"
 #include "enums.h"
+#include "BluetoothModule.h"
+#include "RealTimeClockModule.h"
+#include "csLFXT_jjs.h"
 
 extern int length(int array[]);
 

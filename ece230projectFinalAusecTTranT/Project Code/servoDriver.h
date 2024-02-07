@@ -46,7 +46,7 @@ extern "C"
  *
  * \return None
  */
-extern void initServoMotor(void);
+extern void InitServoMotor(void);
 
 
 /*!
