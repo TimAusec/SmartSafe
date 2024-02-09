@@ -25,7 +25,7 @@ void ConfigureDevices()
 {
     ConfigureLEDs();
     configHFXT();
-//    configLFXT_jjs();
+    configLFXT_jjs();
 //    ConfigRTC();
     ConfigureSW1();
     InitServoMotor();

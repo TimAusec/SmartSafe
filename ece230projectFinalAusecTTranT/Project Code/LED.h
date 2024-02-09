@@ -14,9 +14,8 @@
 #define LED_PORT P2
 #define RED_LED_PIN BIT5
 #define GREEN_LED_PIN BIT4
-#define ACLK 128e3
+#define ACLK 32786
 #define INTERRUPT_DELAY_SECONDS 0.5
-#define FULL_NOTE       32768
 #define QUARTER_NOTE    ACLK*INTERRUPT_DELAY_SECONDS
 
 extern void ConfigureLEDs(void);
