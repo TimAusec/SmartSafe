@@ -14,7 +14,7 @@
  */
 
 
-#include "csLFXT_jjs.h"
+#include <csLFXT_jjs.h>
 #include "msp.h"
 
 void configLFXT_jjs(void)

@@ -16,12 +16,6 @@
 
 bool safeSecurityFlag = false;
 
-char attemptsRemaining[] = {"\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r"};
-char servoDoorStatus[] = {"\n\r\nPress (S) to see if the door is open or closed! \n\r"};
-char lastAttemptsMade[] = {"\n\r\nPress (M) to view the most recent attempts! \n\r"};
-char directionOfSafe[] = {"n\r\nPress (D) to see the direction the safe is going! \n\r"};
-char invalid1[] = {"\n\rInvalid value \n\r"};
-
 int length(int array[])
 {
     return sizeof(array) / sizeof(array[0]);
@@ -36,7 +30,7 @@ void ConfigureDevices()
     ConfigureSW1();
     InitServoMotor();
     ConfigKeyPad();
-    InitBluetooth();
+    //   InitBluetooth();
 }
 
 void OpenSafe()
@@ -83,37 +77,10 @@ void main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
     ConfigureDevices();
-    char KeyEntered;
     __enable_irq();
 
     while (1)
     {
-        KeyEntered = GetCharBluetooth();
-        if(KeyEntered != NULL)
-        {
-            switch(KeyEntered)
-            {
-            case 'A':
-                SendCharArrayBluetooth(attemptsRemaining);
-                break;
-            case 'S':
-                SendCharArrayBluetooth(servoDoorStatus);
-                break;
-            case 'M':
-                SendCharArrayBluetooth(lastAttemptsMade);
-                break;
-            case 'D':
-                SendCharArrayBluetooth(directionOfSafe);
-                break;
-            default:
-                SendCharArrayBluetooth(invalid1);
-                SendCharArrayBluetooth(attemptsRemaining);
-                SendCharArrayBluetooth(servoDoorStatus);
-                SendCharArrayBluetooth(lastAttemptsMade);
-                SendCharArrayBluetooth(directionOfSafe);
-                break;
-            }
-        }
         if (GetTriesExceededFlag()) //if access attempt count exceeded
         {
             printf("\n Exceeded Tries Condition Reached");
