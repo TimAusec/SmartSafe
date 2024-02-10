@@ -1,8 +1,8 @@
 /*
  * BluetoothModule.h
  *
- *  Created on: Feb 6, 2024
- *      Author: Timothy Ausec
+ *  Created on: Feb 9, 2024
+ *      Author: Tuan Tran
  */
 #include "msp.h"
 #ifndef BLUETOOTHMODULE_H_

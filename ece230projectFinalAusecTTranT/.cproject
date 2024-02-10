@@ -87,7 +87,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="system_msp432p4111.c|startup_msp432p4111_ccs.c|msp432p4111.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Test Drivers|system_msp432p4111.c|startup_msp432p4111_ccs.c|msp432p4111.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -187,4 +187,5 @@
 		<project id="ece230projectFinalAusecTTranT.com.ti.ccstudio.buildDefinitions.MSP432.ProjectType.797813798" name="MSP432" projectType="com.ti.ccstudio.buildDefinitions.MSP432.ProjectType"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
