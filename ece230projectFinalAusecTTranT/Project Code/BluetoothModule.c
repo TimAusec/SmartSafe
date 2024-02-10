@@ -1,8 +1,8 @@
 /*
  * BluetoothModule.c
  *
- *  Created on: Feb 6, 2024
- *      Author: Timothy Ausec
+ *  Created on: Feb 9, 2024
+ *      Author: Tuan Tran
  */
 #include "stdio.h"  //printf(); sprintf();
 #include "stdint.h"
