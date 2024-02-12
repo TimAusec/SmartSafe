@@ -53,7 +53,7 @@ void configHFXT(void)
     FLCTL_A->BANK1_RDCTL  = (FLCTL_A->BANK0_RDCTL & ~(FLCTL_A_BANK1_RDCTL_WAIT_MASK)) |
             FLCTL_A_BANK1_RDCTL_WAIT_3;
 
-    /* Step 3: Configure HFXT to use 48MHz crystal, source to MCLK & HSMCLK */
+    /* Step 3: Configure HFXT to use 12MHz crystal, source to MCLK & SMCLK */
 
 
     /* See Table 6-85 in Section 6.12.23 of Data Sheet for summary of PJ.2 and
@@ -75,12 +75,10 @@ void configHFXT(void)
         CS->CLRIFG |= CS_CLRIFG_CLR_HFXTIFG;
 
     /* Select clock source for MCLK & HSMCLK = HFXT, no divider */
-    CS->CTL1 = (CS->CTL1 & ~(CS_CTL1_SELM_MASK | CS_CTL1_DIVM_MASK
-                | CS_CTL1_SELS_MASK | CS_CTL1_DIVHS_MASK))      // clear fields
-                | CS_CTL1_SELM__HFXTCLK         // select MCLK source HFXTCLK
-                | CS_CTL1_SELS__HFXTCLK         // select SMCLK source HFXTCLK
-                | CS_CTL1_DIVM__1               // set MCLK divider /1
-                | CS_CTL1_DIVS__1;              // set SMCLK divider /1
+    CS->CTL0 = 0;                           // Reset tuning parameters
+        CS->CTL0 = CS_CTL0_DCORSEL_3;           // Set DCO to 12MHz (nominal, center of 8-16MHz range)
+        CS->CTL1 = CS_CTL1_SELS_3 |                // SMCLK = DCO
+                   CS_CTL1_SELM_3;                 // MCLK = DCO
 
     CS->KEY = 0;                        // Lock CS module from unintended accesses
 

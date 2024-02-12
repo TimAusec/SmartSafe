@@ -30,10 +30,10 @@ int length(int array[])
 void ConfigureDevices()
 {
     configLFXT_jjs();
+    configHFXT();
     ConfigureSW1();
     InitBluetooth();
     ConfigureLEDs();
-//    configHFXT();
     ConfigRTC();
     InitServoMotor();
     ConfigKeyPad();
