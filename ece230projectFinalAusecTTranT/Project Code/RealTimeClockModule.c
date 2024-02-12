@@ -11,7 +11,7 @@ int Day,Month,Year,Hours,Min,Sec; // Declare Calendar Variables to Read RTC
 
 void ConfigRTC()
 {
-    RTC_C->CTL0 = 0xA540;
+    RTC_C->CTL0 = 0xA500;
 
 //clear this bit to enable writing into registers
 //Real time clock starts operational
@@ -62,22 +62,33 @@ void WriteDateRTC(uint16_t year, uint8_t day, uint8_t month, uint8_t hour, uint8
 void PrintRTCMessage()
 {
     printf("\r\n  Time : %2d:%2d:%2d ", Hours, Min, Sec);
-    printf("      Date : %d / %d / %d ", Day, Month, Year);
+    printf("      Date : %d / %d / %d ", Month, Day, Year);
 }
 
-void RTC_C_IRQHandler(void)
+void GetDateTimeData(int* TimeData,int* currentIndex)
 {
-    if(RTC_C->CTL0 & RTC_C_CTL0_TEVIFG)
+    Day = (RTC_C->DATE)&0x00FF;
+    Month = RTC_C->DATE>>RTC_C_DATE_MON_OFS;
+    Year = RTC_C->YEAR;
+    Hours =  (RTC_C->TIM1>>RTC_C_TIM1_HOUR_OFS)&0x00FF;
+    Min = (RTC_C->TIM0)>>RTC_C_TIM0_MIN_OFS;
+    Sec = (RTC_C->TIM0) & 0x00FF;
+    if(*currentIndex>200)
     {
-        Day = (RTC_C->DATE)&0x00FF;
-        Month = RTC_C->DATE>>RTC_C_DATE_MON_OFS;
-        Year = RTC_C->YEAR;
-        Hours =  (RTC_C->TIM1>>RTC_C_TIM1_HOUR_OFS)&0x00FF;
-        Min = (RTC_C->TIM0)>>RTC_C_TIM0_MIN_OFS;
-        Sec = (RTC_C->TIM0) & 0x00FF;
-        RTC_C->CTL0 = RTC_C_KEY;
-        RTC_C->CTL0 &= ~RTC_C_CTL0_TEVIFG;  //clear interrupt flag
-        RTC_C->CTL0 &= 0x00FF;
-        PrintRTCMessage();
+
     }
+    else
+    {
+    *(TimeData)=Month;
+    *(TimeData+1)=Day;
+    *(TimeData+2)=Year;
+    *(TimeData+3)=Hours;
+    *(TimeData+4)=Min;
+    *(TimeData+5)=Sec;
+    }
+
+    RTC_C->CTL0 = RTC_C_KEY;
+    RTC_C->CTL0 &= 0x00FF;
+    PrintRTCMessage();
+    *(currentIndex)++;
 }

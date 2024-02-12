@@ -15,12 +15,26 @@
 #include "main.h"
 
 bool safeSecurityFlag = false;
+bool once=false;
 
 char attemptsRemaining[] = {"\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r"};
 char servoDoorStatus[] = {"\n\r\nPress (S) to see if the door is open or closed! \n\r"};
 char lastAttemptsMade[] = {"\n\r\nPress (M) to view the most recent attempts! \n\r"};
 char directionOfSafe[] = {"n\r\nPress (D) to see the direction the safe is going! \n\r"};
 char invalid1[] = {"\n\rInvalid value \n\r"};
+
+int TimeData[6];
+int AccessLog[200][6];
+int RTCIndex=0;
+
+void AppendLog()
+{
+    int index;
+    for(index=0;index<6;index++)
+    {
+    AccessLog[RTCIndex][index]=TimeData[index];
+    }
+}
 
 int length(int array[])
 {
@@ -72,11 +86,24 @@ void ResetSafe()
 void IndicateSafeUnlocked()
 {
     LEDIndicateUnlocked();
+    if(!once)
+    {
+    GetDateTimeData(TimeData,&RTCIndex);
+    AppendLog();
+    PrintDateTime();
+    once=true;
+    }
 }
 
 void IndicateSafeLocked()
 {
     LEDIndicateLocked();
+}
+
+void PrintDateTime()
+{
+    printf("\r\n  Time : %2d:%2d:%2d ", AccessLog[RTCIndex][3], AccessLog[RTCIndex][4], AccessLog[RTCIndex][5]);
+    printf("      Date : %d / %d / %d ", AccessLog[RTCIndex][0], AccessLog[RTCIndex][1], AccessLog[RTCIndex][2]);
 }
 
 void main(void)

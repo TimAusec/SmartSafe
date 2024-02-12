@@ -21,9 +21,14 @@
 #include "BluetoothModule.h"
 #include "RealTimeClockModule.h"
 #include "csLFXT_jjs.h"
+#include "RealTimeClockModule.h"
 
 extern int length(int array[]);
 
 extern void ConfigureDevices();
+
+extern void PrintDateTime();
+
+extern void AppendLog();
 
 #endif /* MAIN_H_ */
