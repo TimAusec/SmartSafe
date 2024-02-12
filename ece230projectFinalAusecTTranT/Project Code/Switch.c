@@ -24,6 +24,7 @@ void ConfigureSW1(void)
     Switch1_Port->SEL0 &= ~Switch1_Pin;      // set Switch1 for GPIO
     Switch1_Port->SEL1 &= ~Switch1_Pin;      // set Switch1 for GPIO
     Switch1_Port->DIR &= ~Switch1_Pin;       // set Switch1 as input
+    Switch1_Port->OUT |= Switch1_Pin;       //select pull-up resistor
     Switch1_Port->REN |= Switch1_Pin;        // enable internal pull-up resistor on Switch1
     Switch1_Port->IFG&=~Switch1_Pin;
     Switch1_Port->IE |= Switch1_Pin;        // enable interrupts Switch1
@@ -45,6 +46,8 @@ void PORT1_IRQHandler(void)
             HandleSwitch1Pressed();
             Switch1_Port->IFG &= ~Switch1_Pin; //clear interrupt flags
         }
+    int pins=Switch1_Port->IFG;
+    Switch1_Port->IFG &= ~pins; //clear interrupt flags
 }
 
 void HandleSwitch1Pressed()

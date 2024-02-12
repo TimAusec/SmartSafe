@@ -29,14 +29,14 @@ int length(int array[])
 
 void ConfigureDevices()
 {
-    ConfigureLEDs();
-    configHFXT();
     configLFXT_jjs();
-    ConfigRTC();
     ConfigureSW1();
+    InitBluetooth();
+    ConfigureLEDs();
+//    configHFXT();
+    ConfigRTC();
     InitServoMotor();
     ConfigKeyPad();
-    InitBluetooth();
 }
 
 void OpenSafe()
@@ -88,7 +88,8 @@ void main(void)
 
     while (1)
     {
-        KeyEntered = GetCharBluetooth();
+        // KeyEntered = GetCharBluetooth();
+        KeyEntered=NULL;
         if(KeyEntered != NULL)
         {
             switch(KeyEntered)

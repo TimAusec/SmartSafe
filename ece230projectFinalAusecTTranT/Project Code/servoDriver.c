@@ -53,10 +53,10 @@ void InitServoMotor(void) {
     TIMER_A2->CCTL[1] |= BIT7 | BIT6 | BIT5;
     TIMER_A2->CCTL[1] &= ~(BIT8 | BIT4);
 
-    // Configure Timer_A2 in Up Mode, with source SMCLK, prescale 16:1, and
-    //  interrupt disabled  -  tick rate will be 3MHz (for SMCLK = 48MHz)
+    // Configure Timer_A2 in Up Mode, with source SMCLK, prescale 4:1, and
+    //  interrupt disabled  -  tick rate will be 3MHz (for SMCLK = 12MHz)
     // DONE configure Timer_A2 (requires setting control AND expansion register)
-    TIMER_A2->CTL |= BIT9 | BIT7 | BIT4;
+    TIMER_A2->CTL |= BIT9 | BIT4;
     TIMER_A2->CTL &= ~BIT1;
     TIMER_A2->EX0 |= BIT0 | BIT1;
 }

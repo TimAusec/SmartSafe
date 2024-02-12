@@ -18,9 +18,8 @@ void InitBluetooth()
     CS->KEY = CS_KEY_VAL;                   // Unlock CS module for register access
     CS->CTL0 = 0;                           // Reset tuning parameters
     CS->CTL0 = CS_CTL0_DCORSEL_3;           // Set DCO to 12MHz (nominal, center of 8-16MHz range)
-    CS->CTL1 = CS_CTL1_SELA_2 |             // Select ACLK = REFO
-            CS_CTL1_SELS_3 |                // SMCLK = DCO
-            CS_CTL1_SELM_3;                 // MCLK = DCO
+    CS->CTL1 = CS_CTL1_SELS_3 |                // SMCLK = DCO
+               CS_CTL1_SELM_3;                 // MCLK = DCO
     CS->KEY = 0;                            // Lock CS module from unintended accesses
 
     /* Configure UART pins */
@@ -51,11 +50,8 @@ void InitBluetooth()
     EUSCI_A2->IFG &= ~EUSCI_A_IFG_RXIFG;        // Clear eUSCI RX interrupt flag
     EUSCI_A2->IE |= EUSCI_A_IE_RXIE;            // Enable USCI_A2 RX interrupt
 
-    // Enable global interrupt
-    __enable_irq();
-
     // Enable eUSCIA2 interrupt in NVIC module
-    NVIC->ISER[0] = (1 << EUSCIA2_IRQn );
+    NVIC->ISER[0] |= (1 << EUSCIA2_IRQn );
 }
 
 void SendCharArrayBluetooth(char *Buffer)
