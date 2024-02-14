@@ -39,15 +39,22 @@ void ConfigKeyPad()
 {                //see section 12.4 of the MSP432P4XX technical reference manual
     /*Configure GPIO Pins*/
     KEYPAD_PORT->DIR |= OUTPUT_PINS;            //set output pins to output mode
+    KEYPAD_PORT->SEL0 &= ~(OUTPUT_PINS);
+    KEYPAD_PORT->SEL1 &= ~(OUTPUT_PINS);
+
     KEYPAD_PORT->DIR &= ~(INPUT_PINS);            //set input pins to input mode
-    KEYPAD_PORT->REN &= ~(INPUT_PINS); //disable pullup resistors for input pins
-    KEYPAD_PORT->SEL0 |= ~(OUTPUT_PINS | INPUT_PINS ); //primary function for all pins
-    KEYPAD_PORT->SEL1 |= ~(OUTPUT_PINS | INPUT_PINS ); //primary function for all pins
+    KEYPAD_PORT->SEL0 &= ~(INPUT_PINS); //primary function for all pins
+    KEYPAD_PORT->SEL1 &= ~(INPUT_PINS); //primary function for all pins
+
+    KEYPAD_PORT->OUT |= (INPUT_PINS);      // select pullup resistors
+    KEYPAD_PORT->REN |= (INPUT_PINS); //enable pullup resistors for input pins
+
     KEYPAD_PORT->IE &= ~(OUTPUT_PINS);       //disable interrupts on output pins
     KEYPAD_PORT->IE |= INPUT_PINS;             //enable interrupts on input pins
-    KEYPAD_PORT->IES &= ~(INPUT_PINS); //set input interrupts with a low-to-high transition
-    KEYPAD_PORT->OUT |= OUTPUT_PINS;  //set the output pins low to start reading
-    KEYPAD_PORT->IFG &= ~INPUT_PINS;                                //clear interrupt flags
+    KEYPAD_PORT->IES |= (INPUT_PINS); //set input interrupts with a high-to-low transition
+
+    KEYPAD_PORT->OUT &= ~(OUTPUT_PINS);  //set the output pins low to start reading
+    KEYPAD_PORT->IFG &= ~(INPUT_PINS);   //clear interrupt flags
     /*Clear Code*/
     ClearCode();
     currentTriesCount=0;
@@ -71,16 +78,16 @@ key ConvertInputToKey(char input[])
         //the first key in each row is the row * number of columns
         switch (input[row])
         {
-        case 8:
+        case 7:
             key = NUMBER_OF_COLUMNS * row;
             return key;
-        case 4:
+        case 11:
             key = NUMBER_OF_COLUMNS * row + 1;
             return key;
-        case 2:
+        case 13:
             key = NUMBER_OF_COLUMNS * row + 2;
             return key;
-        case 1:
+        case 14:
             key = NUMBER_OF_COLUMNS * row + 3;
             return key;
         default:
@@ -99,17 +106,17 @@ key GetKeyPressed()
     BIT5,
                                                               BIT4 };
     key inputKey = INVALID;
-    KEYPAD_PORT->OUT &= ~(OUTPUT_PINS); //set all output low
+    KEYPAD_PORT->OUT |= (OUTPUT_PINS); //set all output high
 
-    KEYPAD_PORT->OUT |= SCAN_OUTPUT_SEQUENCE[0]; //pull first row high
+    KEYPAD_PORT->OUT &= ~(SCAN_OUTPUT_SEQUENCE[0]); //pull first row low
     input[0] = (KEYPAD_PORT->IN) & (INPUT_PINS); //read input values
     for (currentRow = 1; currentRow <= NUMBER_OF_ROWS; currentRow++)
     {
-        KEYPAD_PORT->OUT &= ~(SCAN_OUTPUT_SEQUENCE[currentRow - 1]); //pull previous bit low
-        KEYPAD_PORT->OUT |= (SCAN_OUTPUT_SEQUENCE[currentRow]); //pull current row high
+        KEYPAD_PORT->OUT |= (SCAN_OUTPUT_SEQUENCE[currentRow - 1]); //pull previous bit high
+        KEYPAD_PORT->OUT &= ~(SCAN_OUTPUT_SEQUENCE[currentRow]); //pull current row low
         input[currentRow] = (KEYPAD_PORT->IN) & (INPUT_PINS); // read input values
     }
-    KEYPAD_PORT->OUT |= OUTPUT_PINS; //set the output pins high to start reading
+    KEYPAD_PORT->OUT &= ~(OUTPUT_PINS); //set the output pins low to start reading
     inputKey = ConvertInputToKey(input);
     return inputKey;
 
@@ -181,9 +188,11 @@ void PORT4_IRQHandler(void) //Check startup_msp432p4111 file
     if ((INPUT_PINS) & (KEYPAD_PORT->IFG)) //Check if input pins started IRQ
     {
         HandleKeyPadButtonPressed();
-        KEYPAD_PORT->OUT |= OUTPUT_PINS; //set the output pins high to start reading
-        KEYPAD_PORT->IFG = 0; //clear interrupt flags
+        KEYPAD_PORT->IFG &= ~(INPUT_PINS); //clear interrupt flags
     }
+    int pins=(KEYPAD_PORT->IFG);
+    (KEYPAD_PORT->IFG)&=~pins;
+
 }
 void PrintMessageToConsole(key pressed)
 {
