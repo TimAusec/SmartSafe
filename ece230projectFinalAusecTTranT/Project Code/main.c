@@ -16,16 +16,18 @@
 
 bool safeSecurityFlag = false;
 bool once = false;
+bool securityFlag = false;
+bool safeOpenFlag = false;
+bool openCodeEnteredFlag = false;
+bool closeCodeEnteredFlag = false;
+bool switchPressedFlag = false;
+bool stopCodeEnteredFlag = false;
+bool unlockedFlag = false;
 
-char attemptsRemaining[] =
-        { "\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r" };
-char servoDoorStatus[] = {
-        "\n\r\nPress (S) to see if the door is open or closed! \n\r" };
-char lastAttemptsMade[] = {
-        "\n\r\nPress (M) to view the most recent attempts! \n\r" };
-char directionOfSafe[] = {
-        "n\r\nPress (D) to see the direction the safe is going! \n\r" };
-char invalid1[] = { "\n\rInvalid value \n\r" };
+bool sendAttemptsBluetoothFlag = false;
+bool sendDoorStatusBluetoothFlag = false;
+bool sendAccessLogBluetoothFlag = false;
+bool sendUnlockBluetoothFlag = false;
 
 int TimeData[6];
 int AccessLog[100][6];
@@ -36,16 +38,7 @@ void AppendLog()
     int index;
     for (index = 0; index < 6; index++)
     {
-        AccessLog[RTCIndex-1][index] = TimeData[index];
-        int debugRTCIndex=RTCIndex;
-        int debugTimeData=TimeData[index];
-        int debugAccessLog=AccessLog[RTCIndex][index];
-    }
-    for(index=0;index<RTCIndex;index++)
-    {
-        int debugAccessLog=0;
-        debugAccessLog=AccessLog[index][0];
-        int index1=index;
+        AccessLog[RTCIndex - 1][index] = TimeData[index];
     }
 }
 
@@ -87,7 +80,7 @@ void CloseSafe()
     LEDIndicateClosed();
     CloseServo();
     ClearCode();
-    once=false;
+    once = false;
 }
 
 void ResetSafe()
@@ -125,16 +118,36 @@ void PrintDateTime()
     int Second;
     for (index = 0; index < RTCIndex; index++)
     {
-        Month=AccessLog[index][0];
-        Day=AccessLog[index][1];
-        Year=AccessLog[index][2];
-        Hour=AccessLog[index][3];
-        Minute=AccessLog[index][4];
-        Second=AccessLog[index][5];
+        Month = AccessLog[index][0];
+        Day = AccessLog[index][1];
+        Year = AccessLog[index][2];
+        Hour = AccessLog[index][3];
+        Minute = AccessLog[index][4];
+        Second = AccessLog[index][5];
         printf("\r\n  Time : %2d:%2d:%2d ", Hour, Minute, Second);
 
-        printf("      Date : %d / %d / %d ", Month,
-               Day, Year);
+        printf("      Date : %d / %d / %d ", Month, Day, Year);
+    }
+}
+
+void SendAppropriateBluetoothMessage()
+{
+    if (sendAttemptsBluetoothFlag)
+    {
+        int currentTries=GetCurrentTriesCount();
+        SendAttemptsBluetooth(currentTries);
+    }
+    if (sendDoorStatusBluetoothFlag)
+    {
+        SendStatusBluetooth(safeOpenFlag);
+    }
+    if (sendAccessLogBluetoothFlag)
+    {
+        SendAccessLogBluetooth(AccessLog,RTCIndex);
+    }
+    if (sendUnlockBluetoothFlag)
+    {
+        SendUnlockStatusBluetooth(unlockedFlag);
     }
 }
 
@@ -142,69 +155,64 @@ void main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
     ConfigureDevices();
-    char KeyEntered;
     __enable_irq();
+    int index;
+    for(index=0;index<6;index++)
+    {
+        AccessLog[0][index]=0; //initialize accesslog values
+    }
 
     while (1)
     {
-        // KeyEntered = GetCharBluetooth();
-        KeyEntered = NULL;
-        if (KeyEntered != NULL)
-        {
-            switch (KeyEntered)
-            {
-            case 'A':
-                SendCharArrayBluetooth(attemptsRemaining);
-                break;
-            case 'S':
-                SendCharArrayBluetooth(servoDoorStatus);
-                break;
-            case 'M':
-                SendCharArrayBluetooth(lastAttemptsMade);
-                break;
-            case 'D':
-                SendCharArrayBluetooth(directionOfSafe);
-                break;
-            default:
-                SendCharArrayBluetooth(invalid1);
-                SendCharArrayBluetooth(attemptsRemaining);
-                SendCharArrayBluetooth(servoDoorStatus);
-                SendCharArrayBluetooth(lastAttemptsMade);
-                SendCharArrayBluetooth(directionOfSafe);
-                break;
-            }
-        }
-        if (GetTriesExceededFlag()) //if access attempt count exceeded
+        securityFlag = GetTriesExceededFlag();
+        safeOpenFlag = GetServoOpenFlag();
+        openCodeEnteredFlag = GetOpenCodeFlag();
+        closeCodeEnteredFlag = GetCloseCodeFlag();
+        switchPressedFlag = GetSwitch1Flag();
+        stopCodeEnteredFlag = GetStopCodeFlag();
+
+        /* Bluetooth-related flags */
+        sendAttemptsBluetoothFlag = GetSendAttemptsFlag();
+        sendDoorStatusBluetoothFlag = GetSendDoorStatusFlag();
+        sendAccessLogBluetoothFlag = GetSendAccessLogFlag();
+        sendUnlockBluetoothFlag = GetSendUnlockFlag();
+
+        SendAppropriateBluetoothMessage();
+
+        if (securityFlag) //if access attempt count exceeded
         {
             printf("\n Exceeded Tries Condition Reached");
             ActivateSecurity();
         } //end if access attempt count exceeded
-        if (!GetServoOpenFlag()) //if closed
+        if (!safeOpenFlag) //if closed
         {
-            if (GetOpenCodeFlag()) // if open code entered
+            if (openCodeEnteredFlag) // if open code entered
             {
                 IndicateSafeUnlocked();
+                unlockedFlag = true;
+                ClearCode();
             }
-            if (GetOpenCodeFlag() & GetSwitch1Flag()) ////if open code entered and switch pressed
+            if (unlockedFlag & switchPressedFlag) //if open code entered and switch pressed
             {
-                printf("\n Open Condition Reached");
                 OpenSafe();
+                unlockedFlag = false;
             }
         } // end if closed
-        if (GetServoOpenFlag()) //if open
+        if (safeOpenFlag) //if open
         {
-            if (GetCloseCodeFlag()) //if close code entered
+            if (closeCodeEnteredFlag) //if close code entered
             {
-                printf("\n Close Condition Reached");
                 IndicateSafeLocked();
+                unlockedFlag = false;
+                closeCodeEnteredFlag = false;
+                ClearCode();
             }
-            if (GetCloseCodeFlag() & GetSwitch1Flag()) //if close code entered and switch pressed
+            if (!unlockedFlag & switchPressedFlag) //if close code entered and switch pressed
             {
-                printf("\n Close Condition Reached");
                 CloseSafe();
             }
         } // end if open
-        if (GetStopCodeFlag() & GetSwitch1Flag()) //if stop security code entered and switch pressed
+        if (stopCodeEnteredFlag & switchPressedFlag) //if stop security code entered and switch pressed
         {
             printf("\n Stop Condition Reached");
             ResetSafe();

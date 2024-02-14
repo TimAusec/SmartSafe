@@ -250,3 +250,7 @@ bool GetOpenCodeFlag()
 {
     return openCodeFlag;
 }
+int GetCurrentTriesCount()
+{
+    return currentTriesCount;
+}

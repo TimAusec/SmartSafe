@@ -11,6 +11,8 @@
 #include <msp.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
 #include "LED.h"
 #include "servoDriver.h"
 #include "csHFXT.h"
@@ -30,5 +32,7 @@ extern void ConfigureDevices();
 extern void PrintDateTime();
 
 extern void AppendLog();
+
+extern void SendAppropriateBluetoothMessage();
 
 #endif /* MAIN_H_ */

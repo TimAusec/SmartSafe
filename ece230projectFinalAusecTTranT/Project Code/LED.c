@@ -28,7 +28,6 @@ void TA1_N_IRQHandler(void)
     /* Check if interrupt triggered by timer overflow */
     if (TIMER_A1->CTL & TIMER_A_CTL_IFG)
     {
-
         LED_PORT->OUT ^= GREEN_LED_PIN;                    // toggle LED
         TIMER_A1->CTL &= ~TIMER_A_CTL_IFG;    // clears TA1CTL flag
 
