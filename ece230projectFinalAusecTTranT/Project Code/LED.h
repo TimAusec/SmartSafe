@@ -14,6 +14,13 @@
 #define LED_PORT P2
 #define RED_LED_PIN BIT5
 #define GREEN_LED_PIN BIT4
+
+#define CODE_LED_PORT P5
+#define FIRST_CODE_LED_PIN BIT4
+#define SECOND_CODE_LED_PIN BIT2
+#define THIRD_CODE_LED_PIN BIT1
+#define FOURTH_CODE_LED_PIN BIT0
+
 #define ACLK 32786
 #define INTERRUPT_DELAY_SECONDS 0.5
 #define QUARTER_NOTE    ACLK*INTERRUPT_DELAY_SECONDS
@@ -38,4 +45,5 @@ extern void LEDIndicateClosed(void);
 
 extern void LEDIndicateOpen(void);
 
+extern void ActivateAppropriateCodeLEDs(int codeIndex);
 #endif /* LED_H_ */

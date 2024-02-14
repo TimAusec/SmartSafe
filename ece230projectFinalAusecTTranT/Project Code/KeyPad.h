@@ -47,3 +47,7 @@ extern bool GetTriesExceededFlag(void);
 extern bool GetOpenCodeFlag(void);
 //TODO: Document
 extern int GetCurrentTriesCount();
+
+extern int GetCurrentCodeIndex();
+
+extern bool GetWrongCodeFlag();

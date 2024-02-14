@@ -18,7 +18,7 @@ extern void InitBluetooth();
 //TODO: Document
 extern void SendCharArrayBluetooth(char *Buffer);
 //TODO: Document
-extern char GetCharBluetooth();
+extern void SetBluetoothFlags();
 //TODO: Document
 extern void SendUserPrompt();
 
@@ -27,6 +27,8 @@ extern void SendAttemptsBluetooth(int currentTries);
 extern void SendStatusBluetooth(bool safeOpenFlag);
 
 extern void SendAccessLogBluetooth(int AccessLog[][], int RTCIndex);
+
+extern void HandleRecievedValue();
 
 extern void SendUnlockStatusBluetooth(bool unlockedFlag);
 

@@ -37,14 +37,14 @@ void ConfigRTC()
     RTC_C->CTL0 &= 0x00FF;   //Lock the RTC Register after initialization
 
 // Enable the RTC_C in the NVIC module
-    NVIC->ISER[0] |= (1) << RTC_C_IRQn;
+//    NVIC->ISER[0] |= (1) << RTC_C_IRQn;
 }
 
 void WriteDateRTC(uint16_t year, uint8_t day, uint8_t month, uint8_t hour, uint8_t minute,
                   uint8_t second, uint16_t dayOfWeek)
 {
     //     RTC_C->CTL0 = RTC_C_KEY;   //0xA500
-    RTC_C->CTL0 = 0xA540;
+    RTC_C->CTL0 = 0xA500;
 
     //clear this bit to enable writing into registers
     //Real time clock starts operational
@@ -91,5 +91,4 @@ void GetDateTimeData(int* TimeData,int* currentIndex)
     RTC_C->CTL0 &= 0x00FF;
     // PrintRTCMessage(); //debugging purposes
     *(currentIndex)=*(currentIndex)+1;
-    int index=*currentIndex;
 }

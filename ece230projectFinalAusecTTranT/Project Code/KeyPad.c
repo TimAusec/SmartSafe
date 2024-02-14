@@ -18,6 +18,8 @@
 const int NUMBER_OF_ROWS = 4;
 const int NUMBER_OF_COLUMNS = 4;
 
+int currentIndex = 0;
+
 /*Define Security Threshold*/
 const int MAX_TRIES_ALLOWED = 2;
 int currentTriesCount = 0;
@@ -27,6 +29,7 @@ bool closeCodeFlag = false;
 bool triesExceededFlag = false;
 bool openCodeFlag = false;
 bool codeClearedFlag = false;
+bool wrongCodeFlag = false;
 
 /*Define Codes*/
 const key CORRECT_CODE[4] = { one, two, three, four };
@@ -53,11 +56,11 @@ void ConfigKeyPad()
     KEYPAD_PORT->IE |= INPUT_PINS;             //enable interrupts on input pins
     KEYPAD_PORT->IES |= (INPUT_PINS); //set input interrupts with a high-to-low transition
 
-    KEYPAD_PORT->OUT &= ~(OUTPUT_PINS);  //set the output pins low to start reading
+    KEYPAD_PORT->OUT &= ~(OUTPUT_PINS); //set the output pins low to start reading
     KEYPAD_PORT->IFG &= ~(INPUT_PINS);   //clear interrupt flags
     /*Clear Code*/
     ClearCode();
-    currentTriesCount=0;
+    currentTriesCount = 0;
     /*Set Flags*/
     stopCodeFlag = false;
     closeCodeFlag = false;
@@ -129,18 +132,18 @@ void ClearCode()
     { // Reset code
         currentCode[index] = INVALID;
     }
-    if(triesExceededFlag | openCodeFlag)
+    if (triesExceededFlag | openCodeFlag)
     { // if the tries exceeded flag or open code flag are activated when this method is called, rest access attempt count
-        currentTriesCount=0;
-        triesExceededFlag=false;
+        currentTriesCount = 0;
+        triesExceededFlag = false;
     }
+    currentIndex = 0;
     codeClearedFlag = true; //let everyone know the code is clear
     openCodeFlag = false; //let everyone know the openCode is not set
 }
 
 void SaveKeyToCode(key inputKey)
 {
-    static int currentIndex = 0; //initializes only once
     if (codeClearedFlag)
     {
         currentIndex = 0;
@@ -151,9 +154,9 @@ void SaveKeyToCode(key inputKey)
         ClearCode();
         currentIndex = 0;
         currentTriesCount++;
-        if(currentTriesCount >MAX_TRIES_ALLOWED)
+        if (currentTriesCount > MAX_TRIES_ALLOWED)
         {
-         triesExceededFlag=true;
+            triesExceededFlag = true;
         }
     }
     else
@@ -181,6 +184,19 @@ void CalculateIsOpenCode()
         }
     }
     openCodeFlag = truth;
+    if (openCodeFlag)
+    {
+        currentIndex = 0;
+        wrongCodeFlag = false;
+    }
+    if (!openCodeFlag & (currentIndex == 4))
+    {
+        wrongCodeFlag = true;
+    }
+    if (wrongCodeFlag & (currentIndex != 4))
+    {
+        wrongCodeFlag = false;
+    }
 }
 
 void PORT4_IRQHandler(void) //Check startup_msp432p4111 file
@@ -190,8 +206,8 @@ void PORT4_IRQHandler(void) //Check startup_msp432p4111 file
         HandleKeyPadButtonPressed();
         KEYPAD_PORT->IFG &= ~(INPUT_PINS); //clear interrupt flags
     }
-    int pins=(KEYPAD_PORT->IFG);
-    (KEYPAD_PORT->IFG)&=~pins;
+    int pins = (KEYPAD_PORT->IFG);
+    (KEYPAD_PORT->IFG) &= ~pins;
 
 }
 void PrintMessageToConsole(key pressed)
@@ -212,14 +228,22 @@ void HandleKeyPadButtonValue(key pressed)
         stopCodeFlag = false;
         closeCodeFlag = false;
     }
-    else if (pressed == STOP_KEY)
+    else if ((pressed == STOP_KEY) & !openCodeFlag)
     {
-        stopCodeFlag = true;
-        ClearCode();
+            stopCodeFlag = true;
+            if (currentIndex == 4)
+            {
+                wrongCodeFlag = false;
+            }
+            ClearCode();
     }
-    else if (pressed == CLOSE_KEY)
+    else if ((pressed == CLOSE_KEY) & !openCodeFlag)
     {
         closeCodeFlag = true;
+        if (currentIndex == 4)
+        {
+            wrongCodeFlag = false;
+        }
         ClearCode();
     }
 }
@@ -234,6 +258,10 @@ void HandleKeyPadButtonPressed()
     PrintMessageToConsole(pressed);
 }
 
+bool GetWrongCodeFlag()
+{
+    return wrongCodeFlag;
+}
 bool GetCloseCodeFlag()
 {
     return closeCodeFlag;
@@ -253,4 +281,8 @@ bool GetOpenCodeFlag()
 int GetCurrentTriesCount()
 {
     return currentTriesCount;
+}
+int GetCurrentCodeIndex()
+{
+    return currentIndex;
 }

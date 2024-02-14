@@ -16,13 +16,15 @@ char servoDoorStatus[] = {
 char lastAttemptsMade[] = {
         "\n\r\nPress (M) to view the most recent attempts! \n\r" };
 char directionOfSafe[] = {
-        "n\r\nPress (D) to see the direction the safe is going! \n\r" };
+        "\n\r\nPress (D) to see the direction the safe is going! \n\r" };
 char invalid1[] = { "\n\rInvalid value \n\r" };
 
 bool sendAttemptsFlag = false;
 bool sendStatusFlag = false;
 bool sendAccessLogFlag = false;
 bool sendUnlockFlag = false;
+
+uint8_t recieved = 0;
 
 void InitBluetooth()
 {
@@ -48,15 +50,15 @@ void InitBluetooth()
      * DONE lookup values for UCOS16, UCBRx, UCBRFx, and UCBRSx in Table 24-5
      */
     // DONE set clock prescaler in EUSCI_A2 baud rate control register
-    EUSCI_A2->MCTLW |= EUSCI_A_MCTLW_OS16 | BIT5;
     EUSCI_A2->BRW = 78;
+    EUSCI_A2->MCTLW |= EUSCI_A_MCTLW_OS16 | BIT5;
 
     EUSCI_A2->CTLW0 &= ~EUSCI_A_CTLW0_SWRST;    // Initialize eUSCI
     EUSCI_A2->IFG &= ~EUSCI_A_IFG_RXIFG;        // Clear eUSCI RX interrupt flag
-    EUSCI_A2->IE |= EUSCI_A_IE_RXIE;            // Enable USCI_A2 RX interrupt
+//    EUSCI_A2->IE |= EUSCI_A_IE_RXIE;            // Enable USCI_A2 RX interrupt
 
     // Enable eUSCIA2 interrupt in NVIC module
-    NVIC->ISER[0] |= (1 << EUSCIA2_IRQn);
+//    NVIC->ISER[0] |= (1 << EUSCIA2_IRQn);
 
     SendUserPrompt();
 }
@@ -83,30 +85,22 @@ void SendCharArrayBluetooth(char *Buffer)
     }   //end for()
 }
 
-char GetCharBluetooth(void)
+void SetBluetoothFlags(void)
 { //polling
-    char ReceivedChar;
-    while (!(EUSCI_A2->IFG & EUSCI_A_IFG_RXIFG))
-        ;
-    ReceivedChar = EUSCI_A2->RXBUF;
-    return ReceivedChar;
-} //end GetChar(void)
-
-void HandleRecievedValue()
-{
-    uint8_t Key = EUSCI_A2->RXBUF;
+    if ((EUSCI_A2->IFG & EUSCI_A_IFG_RXIFG) == EUSCI_A_IFG_RXIFG)
+        recieved = EUSCI_A2->RXBUF;
+    else
+        recieved = NULL;
+    int gamer=EUSCI_A2->RXBUF;
     sendAttemptsFlag = false;
     sendStatusFlag = false;
     sendAccessLogFlag = false;
     sendUnlockFlag = false;
-    // Echo character back to screen, otherwise user will not be able to
-    //  verify what was typed
-    while (!(EUSCI_A2->IFG & EUSCI_A_IFG_TXIFG))
-        ; // Wait for TX buffer ready
-    EUSCI_A2->TXBUF = Key;                 // Echo character to terminal
-    if (Key != NULL)
+    if (recieved != NULL)
     {
-        switch (Key)
+        while (!(EUSCI_A2->IFG & EUSCI_A_IFG_TXIFG));
+        EUSCI_A2->TXBUF = recieved;                 // Echo character to terminal
+        switch (recieved)
         {
         case 'A':
             sendAttemptsFlag = true;
@@ -125,14 +119,17 @@ void HandleRecievedValue()
             break;
         }
     }
-}
+} //end GetChar(void)
 
-void EUSCIA2_IRQHandler(void)
+void HandleRecievedValue()
 {
-    if (EUSCI_A2->IFG & EUSCI_A_IFG_RXIFG) // Check if receive flag is set (value ready in RX buffer)
-    {
-        HandleRecievedValue();
-    }
+    if ((EUSCI_A2->IFG & EUSCI_A_IFG_RXIFG) == EUSCI_A_IFG_RXIFG)
+        recieved = EUSCI_A2->RXBUF;
+    else
+        recieved = NULL;
+    while (!(EUSCI_A2->IFG & EUSCI_A_IFG_TXIFG))
+        ;
+    EUSCI_A2->TXBUF = recieved;                 // Echo character to terminal
 }
 
 void SendAttemptsBluetooth(int currentTries)
@@ -140,6 +137,7 @@ void SendAttemptsBluetooth(int currentTries)
     char AttemptsMessage[] = { "I'm Empty!" };
     sprintf(AttemptsMessage, "\r\n  Current Attempts: %d \n\n\r", currentTries);
     SendCharArrayBluetooth(AttemptsMessage);
+    EUSCI_A2->IFG=0;
 }
 void SendStatusBluetooth(bool safeOpenFlag)
 {
@@ -156,13 +154,13 @@ void SendStatusBluetooth(bool safeOpenFlag)
 }
 void SendAccessLogBluetooth(int AccessLog[100][6], int RTCIndex)
 {
-    int index;
-    int Month;
-    int Day;
-    int Year;
-    int Hour;
-    int Minute;
-    int Second;
+    volatile int16_t index;
+    volatile int16_t Month;
+    volatile int16_t Day;
+    volatile int16_t Year;
+    volatile int16_t Hour;
+    volatile int16_t Minute;
+    volatile int16_t Second;
     for (index = 0; index < RTCIndex; index++)
     {
         Month = AccessLog[index][0];
@@ -173,15 +171,18 @@ void SendAccessLogBluetooth(int AccessLog[100][6], int RTCIndex)
         Second = AccessLog[index][5];
         char TimeMessage[] = { "I'm empty!" };
         char DateMessage[] = { "I'm empty!" };
-        //sprintf(TimeMessage, "\r\n  Time : %2d:%2d:%2d ", Hour, Minute, Second); //causes death; cannot be used
+        sprintf(TimeMessage, "\r\n  Time : %2d:%2d:%2d ", Hour, Minute, Second); //causes death; cannot be used
         SendCharArrayBluetooth(TimeMessage);
-        //sprintf(DateMessage, "      Date : %d / %d / %d \n\n\r", Month, Day, Year); //causes death; cannot be used
+        sprintf(DateMessage, "      Date : %d / %d / %d \n\n\r", Month, Day,
+                Year); //causes death; cannot be used
         SendCharArrayBluetooth(DateMessage);
     }
+
 }
 void SendUnlockStatusBluetooth(bool unlockedFlag)
 {
-    char SafeUnlockedMessage[] = { "\n\r\nThe safe is currently unlocked \n\n\r" };
+    char SafeUnlockedMessage[] =
+            { "\n\r\nThe safe is currently unlocked \n\n\r" };
     char SafeLockedMessage[] = { "\n\r\nThe safe is currently locked \n\n\r" };
     if (unlockedFlag)
     {

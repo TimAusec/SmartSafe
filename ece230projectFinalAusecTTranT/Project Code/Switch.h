@@ -10,8 +10,8 @@
 
 #include "main.h"
 
-#define Switch1_Port P1
-#define Switch1_Pin BIT1
+#define Switch1_Port P2
+#define Switch1_Pin BIT6
 
 extern void Debounce();
 //TODO: Document

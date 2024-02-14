@@ -20,6 +20,7 @@ bool securityFlag = false;
 bool safeOpenFlag = false;
 bool openCodeEnteredFlag = false;
 bool closeCodeEnteredFlag = false;
+bool wrongCodeEnteredFlag = false;
 bool switchPressedFlag = false;
 bool stopCodeEnteredFlag = false;
 bool unlockedFlag = false;
@@ -49,14 +50,14 @@ int length(int array[])
 
 void ConfigureDevices()
 {
-    configLFXT_jjs();
+    // configLFXT_jjs();
     configHFXT();
-    ConfigureSW1();
+    // ConfigureSW1();
     InitBluetooth();
-    ConfigureLEDs();
-    ConfigRTC();
-    InitServoMotor();
-    ConfigKeyPad();
+    // ConfigureLEDs();
+    // ConfigRTC();
+    // InitServoMotor();
+    // ConfigKeyPad();
 }
 
 void OpenSafe()
@@ -136,18 +137,22 @@ void SendAppropriateBluetoothMessage()
     {
         int currentTries=GetCurrentTriesCount();
         SendAttemptsBluetooth(currentTries);
+        SendUserPrompt();
     }
     if (sendDoorStatusBluetoothFlag)
     {
         SendStatusBluetooth(safeOpenFlag);
+        SendUserPrompt();
     }
     if (sendAccessLogBluetoothFlag)
     {
         SendAccessLogBluetooth(AccessLog,RTCIndex);
+        SendUserPrompt();
     }
     if (sendUnlockBluetoothFlag)
     {
         SendUnlockStatusBluetooth(unlockedFlag);
+        SendUserPrompt();
     }
 }
 
@@ -170,7 +175,9 @@ void main(void)
         closeCodeEnteredFlag = GetCloseCodeFlag();
         switchPressedFlag = GetSwitch1Flag();
         stopCodeEnteredFlag = GetStopCodeFlag();
+        wrongCodeEnteredFlag = GetWrongCodeFlag();
 
+        SetBluetoothFlags();
         /* Bluetooth-related flags */
         sendAttemptsBluetoothFlag = GetSendAttemptsFlag();
         sendDoorStatusBluetoothFlag = GetSendDoorStatusFlag();
@@ -179,6 +186,8 @@ void main(void)
 
         SendAppropriateBluetoothMessage();
 
+        ActivateAppropriateCodeLEDs(GetCurrentCodeIndex());
+
         if (securityFlag) //if access attempt count exceeded
         {
             printf("\n Exceeded Tries Condition Reached");
@@ -186,6 +195,14 @@ void main(void)
         } //end if access attempt count exceeded
         if (!safeOpenFlag) //if closed
         {
+            if(!openCodeEnteredFlag & !wrongCodeEnteredFlag & !unlockedFlag)
+            {
+                LEDIndicateClosed();
+            }
+            if(wrongCodeEnteredFlag)
+            {
+                LEDIndicateLocked();
+            }
             if (openCodeEnteredFlag) // if open code entered
             {
                 IndicateSafeUnlocked();

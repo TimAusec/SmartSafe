@@ -30,7 +30,7 @@ void ConfigureSW1(void)
     Switch1_Port->IE |= Switch1_Pin;        // enable interrupts Switch1
     Switch1_Port->IES |= Switch1_Pin;       //set input interrupts with a high to low transition
     /*Enable NVIC In The ISER Register*/
-    NVIC->ISER[1] |= (1 << (PORT1_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
+    NVIC->ISER[1] |= (1 << (PORT2_IRQn - DMA_INT2_IRQn)); //see msp432P4111.h + Table 4-60 in the MSP432P4111X Data Sheet
 }
 
 void WaitForSwitch1ToOpen()
@@ -39,7 +39,7 @@ void WaitForSwitch1ToOpen()
     while(!(CheckSW1()));        // wait for release
     Debounce(); //release debounce
 }
-void PORT1_IRQHandler(void)
+void PORT2_IRQHandler(void)
 {
     if ((Switch1_Pin) & (Switch1_Port->IFG)) //Check if switch1 pin started IRQ
         {
