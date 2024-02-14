@@ -50,14 +50,14 @@ int length(int array[])
 
 void ConfigureDevices()
 {
-    // configLFXT_jjs();
+    configLFXT_jjs();
     configHFXT();
-    // ConfigureSW1();
+    ConfigureSW1();
     InitBluetooth();
-    // ConfigureLEDs();
-    // ConfigRTC();
-    // InitServoMotor();
-    // ConfigKeyPad();
+    ConfigureLEDs();
+    ConfigRTC();
+    InitServoMotor();
+    ConfigKeyPad();
 }
 
 void OpenSafe()
