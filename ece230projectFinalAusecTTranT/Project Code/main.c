@@ -15,24 +15,37 @@
 #include "main.h"
 
 bool safeSecurityFlag = false;
-bool once=false;
+bool once = false;
 
-char attemptsRemaining[] = {"\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r"};
-char servoDoorStatus[] = {"\n\r\nPress (S) to see if the door is open or closed! \n\r"};
-char lastAttemptsMade[] = {"\n\r\nPress (M) to view the most recent attempts! \n\r"};
-char directionOfSafe[] = {"n\r\nPress (D) to see the direction the safe is going! \n\r"};
-char invalid1[] = {"\n\rInvalid value \n\r"};
+char attemptsRemaining[] =
+        { "\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r" };
+char servoDoorStatus[] = {
+        "\n\r\nPress (S) to see if the door is open or closed! \n\r" };
+char lastAttemptsMade[] = {
+        "\n\r\nPress (M) to view the most recent attempts! \n\r" };
+char directionOfSafe[] = {
+        "n\r\nPress (D) to see the direction the safe is going! \n\r" };
+char invalid1[] = { "\n\rInvalid value \n\r" };
 
 int TimeData[6];
-int AccessLog[200][6];
-int RTCIndex=0;
+int AccessLog[100][6];
+int RTCIndex = 0;
 
 void AppendLog()
 {
     int index;
-    for(index=0;index<6;index++)
+    for (index = 0; index < 6; index++)
     {
-    AccessLog[RTCIndex][index]=TimeData[index];
+        AccessLog[RTCIndex-1][index] = TimeData[index];
+        int debugRTCIndex=RTCIndex;
+        int debugTimeData=TimeData[index];
+        int debugAccessLog=AccessLog[RTCIndex][index];
+    }
+    for(index=0;index<RTCIndex;index++)
+    {
+        int debugAccessLog=0;
+        debugAccessLog=AccessLog[index][0];
+        int index1=index;
     }
 }
 
@@ -74,6 +87,7 @@ void CloseSafe()
     LEDIndicateClosed();
     CloseServo();
     ClearCode();
+    once=false;
 }
 
 void ResetSafe()
@@ -86,12 +100,12 @@ void ResetSafe()
 void IndicateSafeUnlocked()
 {
     LEDIndicateUnlocked();
-    if(!once)
+    if (!once)
     {
-    GetDateTimeData(TimeData,&RTCIndex);
-    AppendLog();
-    PrintDateTime();
-    once=true;
+        GetDateTimeData(TimeData, &RTCIndex);
+        AppendLog();
+        PrintDateTime();
+        once = true;
     }
 }
 
@@ -102,8 +116,26 @@ void IndicateSafeLocked()
 
 void PrintDateTime()
 {
-    printf("\r\n  Time : %2d:%2d:%2d ", AccessLog[RTCIndex][3], AccessLog[RTCIndex][4], AccessLog[RTCIndex][5]);
-    printf("      Date : %d / %d / %d ", AccessLog[RTCIndex][0], AccessLog[RTCIndex][1], AccessLog[RTCIndex][2]);
+    int index;
+    int Month;
+    int Day;
+    int Year;
+    int Hour;
+    int Minute;
+    int Second;
+    for (index = 0; index < RTCIndex; index++)
+    {
+        Month=AccessLog[index][0];
+        Day=AccessLog[index][1];
+        Year=AccessLog[index][2];
+        Hour=AccessLog[index][3];
+        Minute=AccessLog[index][4];
+        Second=AccessLog[index][5];
+        printf("\r\n  Time : %2d:%2d:%2d ", Hour, Minute, Second);
+
+        printf("      Date : %d / %d / %d ", Month,
+               Day, Year);
+    }
 }
 
 void main(void)
@@ -116,10 +148,10 @@ void main(void)
     while (1)
     {
         // KeyEntered = GetCharBluetooth();
-        KeyEntered=NULL;
-        if(KeyEntered != NULL)
+        KeyEntered = NULL;
+        if (KeyEntered != NULL)
         {
-            switch(KeyEntered)
+            switch (KeyEntered)
             {
             case 'A':
                 SendCharArrayBluetooth(attemptsRemaining);

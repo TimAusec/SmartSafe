@@ -89,6 +89,7 @@ void GetDateTimeData(int* TimeData,int* currentIndex)
 
     RTC_C->CTL0 = RTC_C_KEY;
     RTC_C->CTL0 &= 0x00FF;
-    PrintRTCMessage();
-    *(currentIndex)++;
+    // PrintRTCMessage(); //debugging purposes
+    *(currentIndex)=*(currentIndex)+1;
+    int index=*currentIndex;
 }
