@@ -8,6 +8,7 @@
 #include "Switch.h"
 bool switch1Flag=false;
 
+/* Define static variables */
 #define DEFAULT_CLOCK_FREQUENCY_KHZ 500
 #define DEBOUNCE_DELAY_TIME_MS      30
 #define DEBOUNCE_DELAY_COUNT        DEFAULT_CLOCK_FREQUENCY_KHZ*DEBOUNCE_DELAY_TIME_MS
