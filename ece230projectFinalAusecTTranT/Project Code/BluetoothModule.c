@@ -10,7 +10,7 @@ char prompt1[] = { "\n\rHello " };
 char invalid[] = { "\n\rInvalid value" };
 
 char attemptsRemaining[] =
-        { "\n\r\nOptions: \n\rPress (A) to see how many attempts you have left! \n\r" };
+        { "\n\r\nOptions: \n\rPress (A) to see how many attempts have been made! \n\r" };
 char servoDoorStatus[] = {
         "\n\r\nPress (S) to see if the door is open or closed! \n\r" };
 char lastAttemptsMade[] = {
