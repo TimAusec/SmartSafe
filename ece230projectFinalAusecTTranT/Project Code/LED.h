@@ -38,12 +38,16 @@ extern void ConfigureLEDs(void);
 /*
  * \brief Sets P2.4 (Green LED) to on
  *
+ * Modified \b P2.4OUT register
+ *
  * \return None
  */
 extern void GreenLEDOn(void);
 
 /*
  * \brief Sets P2.5 (Red LED) to on
+ *
+ * Modified \b P2.5OUT register
  *
  * \return None
  */
@@ -52,12 +56,16 @@ extern void RedLEDOn(void);
 /*
  * \brief Sets P2.4 (Green LED) to off
  *
+ * Modified \b P2.4OUT register
+ *
  * \return None
  */
 extern void GreenLEDOff(void);
 
 /*
  * \brief Sets P2.5 (Red LED) to off
+ *
+ * Modified \b P2.5OUT register
  *
  * \return None
  */
@@ -68,12 +76,16 @@ extern void RedLEDOff(void);
  * Configures TIMER_A1 CTL in up mode with interrupts enabled
  * Sets blinking flag to true
  *
+ * Modified \b P2.4OUT register and TIMER_A1 CTL timer
+ *
  * \return None
  */
 extern void LEDIndicateUnlocked(void);
 
 /*
  * \brief Turns the red LED on and green LED off to indicate locked (security mode)
+ *
+ * Modified \b P2.4OUT and P2.5OUT registers
  *
  * \return None
  */
@@ -82,12 +94,16 @@ extern void LEDIndicateSecurityMode(void);
 /*
  * \brief Turns the red LED on and green LED off to indicate safe is locked
  *
+ * Modified \b P2.4OUT and P2.5OUT registers
+ *
  * \return None
  */
 extern void LEDIndicateLocked(void);
 
 /*
  * \brief Turns both LED's off to indicate closed
+ *
+ * Modified \b P2.4OUT and P2.5OUT registers
  *
  * \return None
  */
@@ -96,6 +112,8 @@ extern void LEDIndicateClosed(void);
 /*
  * \brief Turns the green LED from blinking to solid to indicate open and turns the red LED off
  *
+ * Modified \b P2.4OUT and P2.5OUT registers
+ *
  * \return None
  */
 extern void LEDIndicateOpen(void);
@@ -103,6 +121,8 @@ extern void LEDIndicateOpen(void);
 /*
  * \brief Turns on LED's sequentially when a button is pressed on the keypad
  * Indicates how many digits have been entered
+ *
+ * Modified \b P5.0, P5.1, P5.2 , and P5.4 OUT registers
  *
  * \return None
  */
