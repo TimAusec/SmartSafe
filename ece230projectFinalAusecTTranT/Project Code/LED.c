@@ -58,7 +58,7 @@ void GreenLEDStopBlinking()
 {
     if (blinking)
     {
-        TIMER_A1->CTL = 0b000100000110; // Configures Timer_A1 in Up Mode with interrupt enabled
+        TIMER_A1->CTL = 0b000100000110; // Configures Timer_A1 in stop Mode with interrupt enabled
         blinking = false;
     }
 }
