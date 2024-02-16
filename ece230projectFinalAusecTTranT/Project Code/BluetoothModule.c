@@ -134,7 +134,7 @@ void HandleRecievedValue()
 
 void SendAttemptsBluetooth(int currentTries)
 {
-    char AttemptsMessage[] = { "I'm Empty!" };
+    char AttemptsMessage[200] = { "I'm Empty!" };
     sprintf(AttemptsMessage, "\r\n  Current Attempts: %d \n\n\r", currentTries);
     SendCharArrayBluetooth(AttemptsMessage);
     EUSCI_A2->IFG=0;
@@ -169,8 +169,8 @@ void SendAccessLogBluetooth(int AccessLog[100][6], int RTCIndex)
         Hour = AccessLog[index][3];
         Minute = AccessLog[index][4];
         Second = AccessLog[index][5];
-        char TimeMessage[] = { "I'm empty!" };
-        char DateMessage[] = { "I'm empty!" };
+        char TimeMessage[200] = { "I'm empty!" };
+        char DateMessage[200] = { "I'm empty!" };
         sprintf(TimeMessage, "\r\n  Time : %2d:%2d:%2d ", Hour, Minute, Second); //causes death; cannot be used
         SendCharArrayBluetooth(TimeMessage);
         sprintf(DateMessage, "      Date : %d / %d / %d \n\n\r", Month, Day,
