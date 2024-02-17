@@ -15,8 +15,8 @@ char servoDoorStatus[] = {
         "\n\r\nPress (S) to see if the door is open or closed! \n\r" };
 char lastAttemptsMade[] = {
         "\n\r\nPress (M) to view the most recent attempts! \n\r" };
-char lockedOrUnlocked[] = {
-        "\n\r\nPress (U) to see if the safe is unlocked! \n\r" };
+char directionOfSafe[] = {
+        "\n\r\nPress (D) to see the direction the safe is going! \n\r" };
 char invalid1[] = { "\n\rInvalid value \n\r" };
 
 bool sendAttemptsFlag = false;
@@ -67,7 +67,7 @@ void SendUserPrompt()
     SendCharArrayBluetooth(attemptsRemaining);
     SendCharArrayBluetooth(servoDoorStatus);
     SendCharArrayBluetooth(lastAttemptsMade);
-    SendCharArrayBluetooth(lockedOrUnlocked);
+    SendCharArrayBluetooth(directionOfSafe);
 }
 
 void SendCharArrayBluetooth(char *Buffer)
@@ -111,7 +111,7 @@ void SetBluetoothFlags(void)
         case 'M':
             sendAccessLogFlag = true;
             break;
-        case 'U':
+        case 'D':
             sendUnlockFlag = true;
             break;
         default:
