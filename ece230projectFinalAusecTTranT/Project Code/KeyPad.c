@@ -252,8 +252,9 @@ void HandleKeyPadButtonPressed()
     Debounce();
     key pressed = GetKeyPressed();
     HandleKeyPadButtonValue(pressed);
-    while (GetKeyPressed() != INVALID)
-        ; //wait for release
+    //while (GetKeyPressed() != INVALID);
+    while(!((KEYPAD_PORT->IN)&(INPUT_PINS)));
+    //wait for release
     Debounce();
     PrintMessageToConsole(pressed);
 }

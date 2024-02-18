@@ -30,9 +30,13 @@ extern "C"
 #include "KeyPad.h"
 
 // add tick count values for constants
-#define SERVO_TMR_PERIOD                60000
-#define SERVO_ZERO_DEGREE_TICKS         2250
-#define SERVO_NINETY_DEGREE_TICKS       6500
+#define ACLK                            32786
+#define FREQUENCY                       25
+#define SERVO_TMR_PERIOD                ACLK/FREQUENCY
+#define SERVO_ZERO_DEGREE_PULSE_WIDTH   500e-6
+#define SERVO_NINET_DEGREE_PULSE_WIDTH  2500e-6
+#define SERVO_ZERO_DEGREE_TICKS         ACLK*SERVO_ZERO_DEGREE_PULSE_WIDTH
+#define SERVO_NINETY_DEGREE_TICKS       ACLK*SERVO_NINET_DEGREE_PULSE_WIDTH
 
 
 /*!
