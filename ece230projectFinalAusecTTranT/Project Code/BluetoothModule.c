@@ -115,7 +115,7 @@ void SetBluetoothFlags(void)
             sendUnlockFlag = true;
             break;
         default:
-            SendCharArrayBluetooth(invalid1);
+            SendUserPrompt();
             break;
         }
     }

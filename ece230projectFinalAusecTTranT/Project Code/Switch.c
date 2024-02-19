@@ -59,7 +59,7 @@ void HandleSwitch1Pressed()
 
 bool CheckSW1()
 {
-    return ((Switch1_Pin) & (Switch1_Port->IFG));
+    return ((Switch1_Pin) & (Switch1_Port->IN));
 }
 
 bool GetSwitch1Flag()

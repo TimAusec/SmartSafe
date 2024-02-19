@@ -14,17 +14,21 @@
 
 #include "main.h"
 
+/* Safe State Flags */
 bool safeSecurityFlag = false;
-bool once = false;
 bool securityFlag = false;
 bool safeOpenFlag = false;
+bool unlockedFlag = false;
+bool once=false;
+
+/* Code Flags */
 bool openCodeEnteredFlag = false;
 bool closeCodeEnteredFlag = false;
 bool wrongCodeEnteredFlag = false;
-bool switchPressedFlag = false;
 bool stopCodeEnteredFlag = false;
-bool unlockedFlag = false;
+bool switchPressedFlag = false;
 
+/* Bluetooth Flags */
 bool sendAttemptsBluetoothFlag = false;
 bool sendDoorStatusBluetoothFlag = false;
 bool sendAccessLogBluetoothFlag = false;
@@ -135,7 +139,7 @@ void SendAppropriateBluetoothMessage()
 {
     if (sendAttemptsBluetoothFlag)
     {
-        int currentTries=GetCurrentTriesCount();
+        int currentTries = GetCurrentTriesCount();
         SendAttemptsBluetooth(currentTries);
         SendUserPrompt();
     }
@@ -146,7 +150,7 @@ void SendAppropriateBluetoothMessage()
     }
     if (sendAccessLogBluetoothFlag)
     {
-        SendAccessLogBluetooth(AccessLog,RTCIndex);
+        SendAccessLogBluetooth(AccessLog, RTCIndex);
         SendUserPrompt();
     }
     if (sendUnlockBluetoothFlag)
@@ -162,9 +166,9 @@ void main(void)
     ConfigureDevices();
     __enable_irq();
     int index;
-    for(index=0;index<6;index++)
+    for (index = 0; index < 6; index++)
     {
-        AccessLog[0][index]=0; //initialize accesslog values
+        AccessLog[0][index] = 0; //initialize accesslog values
     }
 
     while (1)
@@ -185,8 +189,10 @@ void main(void)
         sendUnlockBluetoothFlag = GetSendUnlockFlag();
 
         SendAppropriateBluetoothMessage();
-
-        ActivateAppropriateCodeLEDs(GetCurrentCodeIndex());
+        if (!unlockedFlag)
+        {
+            ActivateAppropriateCodeLEDs(GetCurrentCodeIndex());
+        }
 
         if (securityFlag) //if access attempt count exceeded
         {
@@ -195,11 +201,11 @@ void main(void)
         } //end if access attempt count exceeded
         if (!safeOpenFlag) //if closed
         {
-            if(!openCodeEnteredFlag & !wrongCodeEnteredFlag & !unlockedFlag)
+            if (!openCodeEnteredFlag & !wrongCodeEnteredFlag & !unlockedFlag)
             {
                 LEDIndicateClosed();
             }
-            if(wrongCodeEnteredFlag)
+            if (wrongCodeEnteredFlag)
             {
                 LEDIndicateLocked();
             }
@@ -207,7 +213,6 @@ void main(void)
             {
                 IndicateSafeUnlocked();
                 unlockedFlag = true;
-                ClearCode();
             }
             if (unlockedFlag & switchPressedFlag) //if open code entered and switch pressed
             {

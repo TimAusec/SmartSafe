@@ -63,13 +63,13 @@ void InitServoMotor(void) {
 
 void OpenServo(void)
 {
-    TIMER_A2->CCR[1] = SERVO_NINETY_DEGREE_TICKS;
+    TIMER_A2->CCR[1] = SERVO_ZERO_DEGREE_TICKS;
     servoOpenFlag=true;
 }
 
 void CloseServo(void)
 {
-    TIMER_A2->CCR[1] = SERVO_ZERO_DEGREE_TICKS;
+    TIMER_A2->CCR[1] = SERVO_NINETY_DEGREE_TICKS;
     servoOpenFlag=false;
 }
 
